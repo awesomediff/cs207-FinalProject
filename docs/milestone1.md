@@ -11,7 +11,7 @@ Many Machine Learning algorithms estimate the parameters of a model by starting 
 
 There are several approaches for solving derivatives, but there is a tradeoff between accuracy and computational complexity:
 - Numerical approximations typically rely evaluating the function at small intervals and using the change in value to estimate the slope. These approaches are generally easy to implement but suffer from approximation errors, especially for functions with high curvature.
-- Symbolic approaches use an analytical definition of the derivative to produce exact results by may be extremely complicated or expensive to evaluate. Furthermore many Machine Learning algorithms rely on functions that have no closed-form derivative, making symbolic approaches impossible.
+- Symbolic approaches use an analytical definition of the derivative to produce exact results by may be extremely complicated or expensive to evaluate. Furthermore, many Machine Learning algorithms rely on functions that have no closed-form derivative, making symbolic approaches impossible.
 - In the context of Machine Learning, AD offers an ideal compromise between these two approaches: it makes use of the fact that computer programs define functions as a series of elementary operations (addition, exponentiation, etc.) which have known symbolic derivatives, and pairs the evaluation of the derivative with the evaluation of the function itself. AD can evaluate the derivative at a specified point with the same accuracy as function value.
 
 
@@ -21,7 +21,7 @@ There are several approaches for solving derivatives, but there is a tradeoff be
 ## How to Use *AwesomeDiff*
 ### Installation
 * The package will be available on 'PyPI.' 
-    - You can either install install the package in your local environment or in a virtual environment.  
+    - You can either install the package in your local environment or in a virtual environment.  
 * IF you have a Python3 environment with numpy installed ready to go, the awesomediff package can be installed using the following code:
 ```
 pip install awesomediff
@@ -43,9 +43,11 @@ pip install -r requirements.txt
 ```python
 import awesomediff as ad
 ```
-- Generally, the user should initialize an AutoDiff object first using the module. The AutoDiff object can perform elementary math operations and functions. 
-- The constructor of an AutoDiff object takes in a function as input.
-- The user can calculate the derivative and the output value at a targeting evaluation point.
+- Generally, the user should initialize an auto differentiation object (known as a `Variable` object in the package) for each variable they need in the function first using the module. 
+- The user can form functions using the objects initialized to create more complex objects with elementary math operations and functions.
+- The elementary math operations and functions can be performed in the same way as the operations in numpy.
+- The constructor of a 'Variable' object takes in a scalar or a vector.
+- The user can calculate the derivative(s) and the output value(s) at a targeting evaluation point.
 
 Below are some example scenarios to demonstrate how the module works:  
   
