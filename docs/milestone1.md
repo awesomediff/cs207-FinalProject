@@ -60,7 +60,7 @@ There are several approaches for solving derivatives, but there is a tradeoff be
     - The awesomediff package will be available on PyPI.
     - The installation code can be found in the "How to use awesomediff" section.
   * Dependency
-    - awesomediff is dependant on the numpy package for elementary math functions.
+    - awesomediff is dependent on the numpy package for elementary math functions.
   * Package
     - We are not using a framework because this package is relatively straightforward. We will follow the templates and tutorials on PyPI for the packaging process
 
