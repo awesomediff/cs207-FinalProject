@@ -128,7 +128,7 @@ print(funcMulti1.val(), ffuncMulti1.der())
 w = ad.variable([1,2,3])
 z = ad.variable([4,5,6])
 
-funcMulti2 = 3*x+24*y
+funcMulti2 = 3*w+24*z
 
 print(funcMulti2.val(), funcMulti2.der())
 
