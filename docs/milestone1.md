@@ -55,7 +55,7 @@ There are several approaches for solving derivatives, but there is a tradeoff be
   * Test
     - The tests of the package are located in `tests` directory.
     - We use Travis CI to run tests automatically, and we use CodeCov for checking code coverage automatically.
-    - The `README` file presents badges that show the tests performance and code coverage monitored by Travis CI and CodeCov.
+    - The [`README`](../README.md) file presents badges that show the tests performance and code coverage monitored by Travis CI and CodeCov.
   * Distribution  
     - The `awesomediff` package will be available on PyPI.
     - The installation code can be found in the ["How to use `awesomediff`"](#how-to-use-awesomediff) section.
