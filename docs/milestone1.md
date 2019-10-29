@@ -58,7 +58,7 @@ There are several approaches for solving derivatives, but there is a tradeoff be
     - The `README` file presents badges that show the tests performance and code coverage monitored by Travis CI and CodeCov.
   * Distribution  
     - The `awesomediff` package will be available on PyPI.
-    - The installation code can be found in the "How to use `awesomediff`" section.
+    - The installation code can be found in the ["How to use `awesomediff`"](#how-to-use-awesomediff) section.
   * Dependency
     - `awesomediff` is dependent on the `numpy` package for elementary math functions.
   * Package
