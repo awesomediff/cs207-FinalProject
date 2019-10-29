@@ -19,7 +19,102 @@ There are several approaches for solving derivatives, but there is a tradeoff be
 
 
 ## How to Use *AwesomeDiff*
+### Installation
+* The package will be available on 'PyPI.' 
+    - You can either install install the package in your local environment or in a virtual environment.  
+* IF you have a Python3 environment with numpy installed ready to go, the awesomediff package can be installed using the following code:
+```
+pip install awesomediff
+```
+* If you want to install the package in a virtual environment, set up the virtual environment using:
+```
+conda create -n awesomediff python=3.6 anaconda
+source activate awesomediff
+git clone https://github.com/awesomediff/cs207-FinalProject.git
+cd cs207-FinalProject
+```
+Then install the dependencies using
+```
+pip install -r requirements.txt
+```
 
+### Usage
+- To use awesomediff, the user should import the library first using code similar to this:
+```python
+import awesomediff as ad
+```
+- Generally, the user should initialize an AutoDiff object first using the module. The AutoDiff object can perform elementary math operations and functions. 
+- The constructor of an AutoDiff object takes in a function as input.
+- The user can calculate the derivative and the output value at a targeting evaluation point.
+
+Below are some example scenarios to demonstrate how the module works:  
+  
+I. Scalar function
+This is the simplest case scenario. The AutoDiff object takes in a function that only involved elementary operations with scalers. In the below example, the AutoDiff object calculates the derivative at 3 for f(x) = 3x+15
+```python
+import awesomediff as ad
+
+# instantiate an AutoDiff object at the given scalar point
+x = ad.variable(5.0)
+
+# create the function needed for differentiation
+scalarFunc = 5*x**2
+
+# get the derivative and output value 
+print(scalarFunc.val)
+print(scalarFunc.der)
+```
+
+The AutoDiff object can also take in functions that involve sine, cosine, and exponential terms. The next example shows that the AutoDiff handles these functions the same way as using numpy math functions.
+```python
+import awesomediff as ad
+
+x = ad.variable(3.0)
+
+# a function with an exponential term
+# the exponential function is used in the same way as the exponential funciton in numpy
+funcExp = ad.exp(x)*3+11
+
+print(funcExp.val(), funcExp.der())
+```
+
+II. Vector function
+The AutoDiff object can take in vectors as inputs:
+```python
+import awesomediff as ad
+# instantiate an AutoDiff object with vector inputs
+x = ad.variable([1,2,3])
+
+# create the function needed for differentiation
+funcVector = 5*x**2
+
+# print out output values and derivatives
+print(funcVector.val(), funcVector.der())
+```
+
+III. Scalar and vector functions with multiple variables
+Differentiate multivariable functions can be used the same way with scalar and vector inputs.  
+```python
+import awesomediff as ad
+
+# instantiate two AutoDiff objects with scalar inputs
+x = ad.variable(3.0)
+y = ad.variable(22.0)
+
+# a function with more than one variable
+funcMulti1 = 3*x+24*y
+
+print(funcMulti1.val(), ffuncMulti1.der())
+
+# instantiate two AutoDiff objects with vector inputs
+w = ad.variable([1,2,3])
+z = ad.variable([4,5,6])
+
+funcMulti2 = 3*x+24*y
+
+print(funcMulti2.val(), funcMulti2.der())
+
+```
 
 ## Software Organization
 - An overview of how we are organizing our software package. 
