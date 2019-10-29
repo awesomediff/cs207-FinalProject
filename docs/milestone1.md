@@ -64,8 +64,8 @@ x = ad.variable(5.0)
 scalarFunc = 5*x**2
 
 # get the derivative and output value 
-print(scalarFunc.val)
-print(scalarFunc.der)
+print(scalarFunc.val())
+print(scalarFunc.der())
 ```
 
 The AutoDiff object can also take in functions that involve sine, cosine, and exponential terms. The next example shows that the AutoDiff handles these functions the same way as using numpy math functions.
