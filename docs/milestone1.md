@@ -44,23 +44,23 @@ There are several approaches for solving derivatives, but there is a tradeoff be
         requirements.txt
   ```
   * Modules
-    - 'AutoDiff'
+    - `AutoDiff`
       - The main module that defines an AutoDiff object. It determines the properties of deriving a derivate using automatic differentiation.
-    - 'Efunc'
-      - Contains elementary math functions including sin, cos, log, exp. These functions are written on the basis of the numpy package.
-    - 'LossFunction'
+    - `Efunc`
+      - Contains elementary math functions including `sin`, `cos`, `log`, `exp`. These functions are written on the basis of the `numpy` package.
+    - `LossFunction`
       - The module for the advanced feature (we haven’t decided what advanced feature we are going to implement now).
-    - 'test_diff'
+    - `test_diff`
       - Contains tests for different cases when using the package.  
   * Test
-    - The tests of the package are located in 'tests' directory.
-    - We use 'Travis CI' to run tests automatically, and we use CodeCov for checking code coverage automatically.
-    - The README file presents badges that show the tests performance and code coverage monitored by 'Travis CI' and 'CodeCov.'
+    - The tests of the package are located in `tests` directory.
+    - We use Travis CI to run tests automatically, and we use CodeCov for checking code coverage automatically.
+    - The `README` file presents badges that show the tests performance and code coverage monitored by Travis CI and CodeCov.
   * Distribution  
-    - The awesomediff package will be available on PyPI.
-    - The installation code can be found in the "How to use awesomediff" section.
+    - The `awesomediff` package will be available on PyPI.
+    - The installation code can be found in the "How to use `awesomediff`" section.
   * Dependency
-    - awesomediff is dependent on the numpy package for elementary math functions.
+    - `awesomediff` is dependent on the `numpy` package for elementary math functions.
   * Package
     - We are not using a framework because this package is relatively straightforward. We will follow the templates and tutorials on PyPI for the packaging process
 
