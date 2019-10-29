@@ -49,7 +49,7 @@ import awesomediff as ad
 
 Below are some example scenarios to demonstrate how the module works:  
   
-I. Scalar function
+#### I. Scalar function
 
 This is the simplest case scenario. The AutoDiff object takes in a function that only involved elementary operations with scalers. In the below example, the AutoDiff object calculates the derivative at 3 for f(x) = 3x+15
 ```python
@@ -79,7 +79,7 @@ funcExp = ad.exp(x)*3+11
 print(funcExp.val(), funcExp.der())
 ```
 
-II. Vector function
+#### II. Vector function
 
 The AutoDiff object can take in vectors as inputs:
 ```python
@@ -94,7 +94,7 @@ funcVector = 5*x**2
 print(funcVector.val(), funcVector.der())
 ```
 
-III. Scalar and vector functions with multiple variables
+#### III. Scalar and vector functions with multiple variables
 
 Differentiate multivariable functions can be used the same way with scalar and vector inputs.  
 ```python
