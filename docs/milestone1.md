@@ -22,7 +22,47 @@ There are several approaches for solving derivatives, but there is a tradeoff be
 
 
 ## Software Organization
-
+- An overview of how we are organizing our software package. 
+  * Directory structure  
+  ```
+   cs207-FinalProject\
+        awesomediff\
+            AutoDiff.py
+            Efunc.py
+            LossFunction.py
+        tests\
+            __init__.py
+            test_diff.py
+            test_efunc.py
+            test_loss.py
+        docs\
+            README.md
+        .gitignore
+        .travis.yml
+        README.md
+        setup.cfg
+        requirements.txt
+  ```
+  * Modules
+    - 'AutoDiff'
+      - The main module that defines an AutoDiff object. It determines the properties of deriving a derivate using automatic differentiation.
+    - 'Efunc'
+      - Contains elementary math functions including sin, cos, log, exp. These functions are written on the basis of the numpy package.
+    - 'LossFunction'
+      - The module for the advanced feature (we haven’t decided what advanced feature we are going to implement now).
+    - 'test_diff'
+      - Contains tests for different cases when using the package.  
+  * Test
+    - The tests of the package are located in 'tests' directory.
+    - We use 'Travis CI' to run tests automatically, and we use CodeCov for checking code coverage automatically.
+    - The README file presents badges that show the tests performance and code coverage monitored by 'Travis CI' and 'CodeCov.'
+  * Distribution  
+    - The awesomediff package will be available on PyPI.
+    - The installation code can be found in the "How to use awesomediff" section.
+  * Dependency
+    - awesomediff is dependant on the numpy package for elementary math functions.
+  * Package
+    - We are not using a framework because this package is relatively straightforward. We will follow the templates and tutorials on PyPI for the packaging process
 
 ## Implementation
 
