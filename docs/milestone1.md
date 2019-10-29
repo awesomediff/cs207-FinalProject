@@ -66,4 +66,75 @@ There are several approaches for solving derivatives, but there is a tradeoff be
 
 ## Implementation
 
+#### `AutoDiff` Module
+The module `AutoDiff` consists of the class `Variable`. `Variable` class can be used to instantiate variables of a function for which the user wishes to compute the derivative. When instantiating the `Variable` class, the user will input the value of the variable at which to calculate the function's derivative and the total number of variables in the function.
+
+###### Example
+To calculate the derivative of f(x,y) at x = a and y = b, the user will first need to instantiate `Variable` objects. 
+
+```
+x = Variable(a, 2)
+y = Variable(b, 2)
+```
+The second parameter, 2, indicates that the function we wish to calculate the derivative for is a function of 2 variables. 
+
+
+##### `Variable` Class Attributes
+`Variable` class have two attributes: `self.val` and `self.der`, which keep track of the value of the elementary function and the value of the elementary function’s derivative, respectively. 
+
+`self.val` is initialized with an int or a float that the user passed in as the first parameter of `Variable` class. ` 
+
+`self.der` is a numpy array containing all the partial derivative values of the elementary function. The length of `self.der` will be initialized with the user’s input for the number of variables in the function of interest. 
+
+For example, when calculating the derivative of f(x,y), `self.der` will have a length of 2 where the first element is the partial derivative value of the elementary function with respect to x and the second element is the partial derivative value of the elementary function with respect to y.
+
+##### `Variable` Class Methods
+`Variable` class overloads the following operations:  
+`__add__`  
+`__sub__`  
+`__mul__`  
+`__truediv__`  
+`__pow__`  
+`Variable` class has the corresponding `r` methods to make the above operations commutative.   
+
+
+##### Elementary Operations
+The module should not only be able to compute derivatives of variables that have been added, subtracted, multiplied, divided, or exponentiated by a scalar but also compute derivatives of sum, product, division, or powers of variables (e.g. derivative of x + y, x / y, x * y, x^y). To achieve the latter, each of the operation methods defined in `Variable` handles operations between a scalar and `Variable` object separately from operations between two `Variable` objects
+
+###### Example
+```
+def __add__(x, y):
+	# if x is a Variable object while y is a scalar:
+		# value of derivative is unchanged
+	# if self and other are both Variable objects:
+		# value of derivative is sum of derivative values for x and y 
+```
+
+#### `EFunc` Module
+`Efunc` module contains functions defining each of the following elementary functions:  
+
+`sqrt`  
+`exp`  
+`ln`  
+`log` (logarithm of any chosen base)  
+`sin`, `cos`, `tan`  
+`arcsin`, `arccos`, `arctan`  
+
+`Efunc` module will rely on the numpy package to evaluate the above elementary functions. Functions for each of the elementary function will define how these operations should be doen on scalars as well as `Variable` objects. Take for example, the sin function in the `Efunc` module. 
+
+```
+def sin(x):
+# if x is a scalar:
+	# return np.sin(x)
+# if x is a Variable object:
+	# val = np.sin(x.val)
+	# der = np.cos(x.val) * x.der
+	# f = Variable(val)
+	# f.der = der
+	# return f – returns a Variable object
+```
+
+`Efunc` module is imported into `AutoDiff` module so that when `AutoDiff` module alone is imported by the user, the user can directly use the elementary functions on the `Variable` objects. 
+
+`AutoDiff` module contains a function that handles vector functions. A vector function can be thought of as a list of functions. Therefore we can use the `Variable` class to compute derivatives of each of the component functions and return the outputs as a multi-dimensional array. 
 
