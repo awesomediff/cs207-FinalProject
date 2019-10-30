@@ -39,7 +39,7 @@ By pairing the evaluation of the derivative with the evaluation of the function 
 ### Installation
 * The package will be available on 'PyPI.' 
     - You can either install the package in your local environment or in a virtual environment.  
-* IF you have a Python3 environment with numpy installed ready to go, the awesomediff package can be installed using the following code:
+* If you have a Python3 environment with numpy installed ready to go, the awesomediff package can be installed using the following code:
 ```
 pip install awesomediff
 ```
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 ```python
 import awesomediff as ad
 ```
-- Generally, the user should initialize an auto differentiation object (known as a `Variable` object in the package) for each variable they need in the function first using the module. 
+- Generally, the user should initialize an auto differentiation object (known as a `Variable` object in the package) first, for each variable needed in the function, using the module. 
 - The user can form functions using the objects initialized to create more complex objects with elementary math operations and functions.
 - The elementary math operations and functions can be performed in the same way as the operations in numpy.
 - The constructor of a 'Variable' object takes in a scalar or a vector.
