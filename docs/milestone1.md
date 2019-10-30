@@ -21,9 +21,11 @@ There are several approaches for solving derivatives, but there is a tradeoff be
 Computer programs treat mathematical functions as a series of elementary operations (addition, exponentiation, etc). We can think of complicated functions as a graph consisting of nodes (representing the quantities being operated on) and edges (representing the operations being performed on those quantities). The output of one operation may form the input of another operation, which provides a way to represent nested operations. 
 The user (or the program calling the function) uses input nodes (for example, `x` and `y`) to specify the point at which the function should be evaluated, and the value of the function at that point (for example `f(x,y)`) is represented by a final output node. 
 For example, the loss function MSE can be represented with the following graph:
+![MSE](https://github.com/awesomediff/cs207-FinalProject/blob/milestone1/docs/MSE.png?raw=true)
 
 ### Chain rule 
 AD makes use of the fact that the elementary operations have known symbolic derivatives, and it makes use of the chain rule to iteratively update/compute derivatives of potentially complex programs.
+![Chain Rule](https://github.com/awesomediff/cs207-FinalProject/blob/milestone1/docs/Chain_rule.png?raw=true)
 
 As the function is evaluated at a given point, the forward mode of AD also evaluates the derivative of each elementary operation and applies the chain rule to keep track of compute the derivative of the function at that point. AD also has a reverse mode, which relies on the same principles but applies the chain rule in the opposite direction of traversing the calculation graph.
 
