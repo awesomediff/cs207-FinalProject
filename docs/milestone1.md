@@ -29,7 +29,7 @@ As the function is evaluated at a given point, the forward mode of AD also evalu
 
 We can think of this in terms of the calculation graph described above: as the program traverses the graph to get from input(s) to output(s), and computes the value at each node, the forward mode simultaneously computes the value of the functions derivative at each node. The derivative value associated with the output node is (to machine precision) the value of the functions derivative at the point where the function is being evaluated. The AD approach can also be used to calculate the gradient or Jacobian of functions of multiple variables.
 
-![Vector Input Example](Vecotr Input Example.png)
+![Vector Input Example](https://github.com/awesomediff/cs207-FinalProject/blob/milestone1/docs/Vector%20Input%20Example.png?raw=true)
 
 By pairing the evaluation of the derivative with the evaluation of the function itself, AD achieves machine precision.
 
