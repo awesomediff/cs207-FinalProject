@@ -8,9 +8,17 @@ class variable:
             a seed of 1 is assumed.
         """
 
-        self.val = val
-        self.der = der
+        self._val = val
+        self._der = der
 
+    @property
+    def val(self):
+        return self._val
+
+    @property
+    def der(self):
+        return self._der
+    
     def __repr__(self):
         """
             Define representation of variable object:
