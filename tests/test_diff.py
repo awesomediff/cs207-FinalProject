@@ -1,3 +1,5 @@
+import pytest
+
 from awesomediff import AutoDiff
 
 def test_simple_functions_1():
