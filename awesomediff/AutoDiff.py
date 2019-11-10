@@ -121,3 +121,11 @@ class variable:
 
     def __rdiv__(self,other):
         raise NotImplementedError
+
+    def __eq__(self, other):
+        """
+            Overload equal
+            Check if the thing compared to is a variable and has the same vale
+        """
+        return isinstance(other, variable) and self.val == other.val
+
