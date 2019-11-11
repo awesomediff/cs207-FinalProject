@@ -81,10 +81,10 @@ def test_tan():
 def test_log():
     # log of a scalar
     f1 = AutoDiff.log(1)
-    assert np.allclose(f1, 0)
+    assert np.allclose(f1.val, 0)
 
     f2 = AutoDiff.log(10)
-    assert np.allclose(f2, np.log(10))
+    assert np.allclose(f2.val, np.log(10))
 
     # log of a variable
     x3 = AutoDiff.variable(1)
@@ -100,7 +100,7 @@ def test_log():
 def test_sqrt():
     # square root of a scalar
     f1 = AutoDiff.sqrt(81)
-    assert np.allclose(f1, 9)
+    assert np.allclose(f1.val, 9)
 
     # square root of a variable
     x2 = AutoDiff.variable(49)
@@ -116,7 +116,7 @@ def test_sqrt():
 def test_exp():
     # exponential of a scalar
     f1 = AutoDiff.exp(10)
-    assert np.allclose(f1, np.exp(10))
+    assert np.allclose(f1.val, np.exp(10))
 
     # exponential of a variable
     x2 = AutoDiff.variable(5)

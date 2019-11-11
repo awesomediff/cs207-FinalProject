@@ -231,7 +231,9 @@ def log(x):
         # return x
         return variable(val=new_val,der=new_der)
     except:
-        return np.log(x)
+        new_val = np.log(x)
+        new_der = 0
+        return variable(val=new_val,der=new_der)
 
 def sqrt(x):
     """
@@ -248,7 +250,9 @@ def sqrt(x):
         new_der = (0.5/np.sqrt(x.val))*x.der
         return variable(val=new_val,der=new_der)
     except:
-        return np.sqrt(x)
+        new_val = np.sqrt(x)
+        new_der = 0
+        return variable(val=new_val,der=new_der)
 
 def exp(x):
     """
@@ -265,4 +269,6 @@ def exp(x):
         new_der = np.exp(x.val)*x.der
         return variable(val=new_val,der=new_der)
     except:
-        return np.exp(x)
+        new_val = np.exp(x)
+        new_der = 0
+        return variable(val=new_val,der=new_der)
