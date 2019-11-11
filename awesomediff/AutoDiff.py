@@ -127,8 +127,12 @@ class variable:
                 float(other)
             except:
                 raise ValueError("{} is not a number or instance variable.".format(other))
-            new_val = self.val / other
-            new_der = self.der / other
+
+            if float(other) == 0:
+                raise ZeroDivisionError('Cannot perform division by zero')
+            new_val = self.val / float(other)
+            new_der = self.der / float(other)
+            
         return variable(val=new_val, der=new_der)
 
     def __rtruediv__(self, other):
