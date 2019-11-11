@@ -62,7 +62,7 @@ def test_simple_functions_1():
     try:
         x/'n'
     except ValueError:
-        print('should be a scaler or instance variable')
+        print('should be a scalar or instance variable')
     
     x = AutoDiff.variable(2,2)
     f = x/2
