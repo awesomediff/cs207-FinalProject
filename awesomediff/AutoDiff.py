@@ -136,6 +136,13 @@ class variable:
         new_der = -other * self.val ** (-2)  # other*self.pow(-1)
         return variable(val=new_val, der=new_der)
 
+    def __eq__(self, other):
+        """
+            Overload equal
+            Check if the thing compared to is a variable and has the same vale
+        """
+        return isinstance(other, variable) and self.val == other.val
+
     def __pow__(self, other):
         try:
             # check whether other is a number
