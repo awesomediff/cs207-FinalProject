@@ -39,6 +39,12 @@ def test_simple_functions_1():
     f = x**3
     assert f.val == 27
     assert f.der == 54
+
+    try:
+        x**'n'
+    except ValueError:
+        print('power should be a number')
+
     
     #division(truediv)
     x = AutoDiff.variable(2)
@@ -49,10 +55,14 @@ def test_simple_functions_1():
 
     x = AutoDiff.variable(2)
     try:
-        x/2
+        x/0
     except ZeroDivisionError:
         print('cannot perform division by zero')
 
+    try:
+        x/'n'
+    except ValueError:
+        print('should be a scaler or instance variable')
     
     x = AutoDiff.variable(2,2)
     f = x/2
