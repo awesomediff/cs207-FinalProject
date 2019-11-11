@@ -46,6 +46,13 @@ def test_simple_functions_1():
     f = x/y
     assert f.val == 0.5
     assert f.der == 0.125
+
+    x = AutoDiff.variable(2)
+    try:
+        x/2
+    except ZeroDivisionError:
+        print('cannot perform division by zero')
+
     
     x = AutoDiff.variable(2,2)
     f = x/2
