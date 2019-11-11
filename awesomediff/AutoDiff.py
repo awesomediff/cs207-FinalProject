@@ -132,7 +132,7 @@ class variable:
                 raise ZeroDivisionError('Cannot perform division by zero')
             new_val = self.val / float(other)
             new_der = self.der / float(other)
-            
+
         return variable(val=new_val, der=new_der)
 
     def __rtruediv__(self, other):
