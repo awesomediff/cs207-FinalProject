@@ -77,3 +77,54 @@ def test_tan():
     f4 = AutoDiff.tan(x4*0.5)
     assert np.allclose(f4.val,0.0)
     assert np.allclose(f4.der,0.5)
+
+def test_log():
+    # log of a scalar
+    f1 = AutoDiff.log(1)
+    assert np.allclose(f1, 0)
+
+    f2 = AutoDiff.log(10)
+    assert np.allclose(f2, np.log(10))
+
+    # log of a variable
+    x3 = AutoDiff.variable(1)
+    f3 = AutoDiff.log(x3)
+    assert np.allclose(f3.val, 0)
+    assert np.allclose(f3.der, 1)
+
+    x4 = AutoDiff.variable(3)
+    f4 = AutoDiff.log(x4)*5+1
+    assert np.allclose(f4.val, np.log(3)*5+1)
+    assert np.allclose(f4.der, 5/3)
+
+def test_sqrt():
+    # square root of a scalar
+    f1 = AutoDiff.sqrt(81)
+    assert np.allclose(f1, 9)
+
+    # square root of a variable
+    x2 = AutoDiff.variable(49)
+    f2 = AutoDiff.sqrt(x2)
+    assert np.allclose(f2.val, 7)
+    assert np.allclose(f2.der, 1/14)
+
+    x3 = AutoDiff.variable(64)
+    f3 = 5+2*AutoDiff.sqrt(x3)
+    assert np.allclose(f3.val, 21)
+    assert np.allclose(f3.der, 1/8)
+
+def test_exp():
+    # exponential of a scalar
+    f1 = AutoDiff.exp(10)
+    assert np.allclose(f1, np.exp(10))
+
+    # exponential of a variable
+    x2 = AutoDiff.variable(5)
+    f2 = AutoDiff.exp(x2)
+    assert np.allclose(f2.val, np.exp(5))
+    assert np.allclose(f2.der, np.exp(5))
+
+    x3 = AutoDiff.variable(4)
+    f3 = 5+2*AutoDiff.exp(x3)
+    assert np.allclose(f3.val, 5+2*np.exp(4))
+    assert np.allclose(f3.der, 2*np.exp(4))
