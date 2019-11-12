@@ -1,11 +1,11 @@
 import pytest
-from awesomediff import AutoDiff
+import awesomediff as ad
 
 def test_simple_functions_1():
     
     # Addition and multiplication:
     a = 5.0
-    x = AutoDiff.variable(a)
+    x = ad.variable(a)
     alpha = 2.0
     beta = 3.0
 
@@ -27,7 +27,7 @@ def test_simple_functions_1():
     
     # Power:
     a = 5.0
-    x = AutoDiff.variable(a)
+    x = ad.variable(a)
     f = x**2
     
     assert f.val == 25
@@ -35,7 +35,7 @@ def test_simple_functions_1():
     
     a= 3.0
     d = 2.0
-    x = AutoDiff.variable(a, d)
+    x = ad.variable(a, d)
     f = x**3
     assert f.val == 27
     assert f.der == 54
@@ -47,13 +47,13 @@ def test_simple_functions_1():
 
     
     #division(truediv)
-    x = AutoDiff.variable(2)
-    y = AutoDiff.variable(4)
+    x = ad.variable(2)
+    y = ad.variable(4)
     f = x/y
     assert f.val == 0.5
     assert f.der == 0.125
 
-    x = AutoDiff.variable(2)
+    x = ad.variable(2)
     try:
         x/0
     except ZeroDivisionError:
@@ -64,26 +64,26 @@ def test_simple_functions_1():
     except ValueError:
         print('should be a scalar or instance variable')
     
-    x = AutoDiff.variable(2,2)
+    x = ad.variable(2,2)
     f = x/2
     assert f.val == 1
     assert f.der == 1
     
     #division(rtruediv)
-    x = AutoDiff.variable(4)
+    x = ad.variable(4)
     f = 4/x
     assert f.val == 1
     assert f.der == -0.25
 
 
 def test_equal():
-    x = AutoDiff.variable(3.0)
-    y = AutoDiff.variable(3.0)
+    x = ad.variable(3.0)
+    y = ad.variable(3.0)
 
     assert x==y
 
-    x = AutoDiff.variable(3.0)
-    y = AutoDiff.variable(4.0)
+    x = ad.variable(3.0)
+    y = ad.variable(4.0)
     assert x!=y
 
     alpha = 2.0

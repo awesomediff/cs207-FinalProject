@@ -23,7 +23,7 @@ class variable:
         """
             Define representation of variable object:
         """
-        return "AutoDiff.variable(val={},der={})".format(self.val,self.der)
+        return "awesomediff.variable(val={},der={})".format(self.val,self.der)
 
     def __neg__(self):
         """
@@ -156,3 +156,5 @@ class variable:
         new_der = other * self.val ** (other - 1) * self.der
         return variable(val=new_val, der=new_der)
 
+    def __rdiv__(self,other):
+        raise NotImplementedError
