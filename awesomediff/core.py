@@ -23,7 +23,7 @@ class variable:
         """
             Define representation of variable object:
         """
-        return "AutoDiff.variable(val={},der={})".format(self.val,self.der)
+        return "awesomediff.variable(val={},der={})".format(self.val,self.der)
 
     def __neg__(self):
         """
@@ -116,39 +116,8 @@ class variable:
         """
         return self.__neg__().__add__(other)
 
-    def __truediv__(self, other):
-        try:
-            # assume other is an instance variable
-            new_val = self.val / other.val
-            new_der = (self.der * other.val - self.val * other.der) / other.val ** 2
-        except:
-            # assume in the form of variable/scaler
-            try:
-                float(other)
-            except:
-                raise ValueError("{} is not a number or instance variable.".format(other))
-            new_val = self.val / other
-            new_der = self.der / other
-        return variable(val=new_val, der=new_der)
+    def __div__(self,other):
+        raise NotImplementedError
 
-    def __rtruediv__(self, other):
-        new_val = other / self.val
-        new_der = -other * self.val ** (-2)  # other*self.pow(-1)
-        return variable(val=new_val, der=new_der)
-
-    def __eq__(self, other):
-        """
-            Overload equal
-            Check if the thing compared to is a variable and has the same vale
-        """
-        return isinstance(other, variable) and self.val == other.val
-
-    def __pow__(self, other):
-        try:
-            # check whether other is a number
-            new_val = self.val ** other
-        except:
-            raise ValueError("{} must be a number.".format(other))
-        new_der = other * self.val ** (other - 1) * self.der
-        return variable(val=new_val, der=new_der)
-
+    def __rdiv__(self,other):
+        raise NotImplementedError
