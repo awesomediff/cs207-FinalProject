@@ -3,7 +3,6 @@ import pytest
 
 import awesomediff as ad
 
-
 def test_sin():
 
     # Sine of variable:
