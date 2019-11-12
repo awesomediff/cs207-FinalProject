@@ -53,7 +53,7 @@ def test_simple_functions_1():
     assert f.val == 0.5
     assert f.der == 0.125
 
-    x = AutoDiff.variable(2)
+    x = ad.variable(2)
     try:
         x/0
     except ZeroDivisionError:
