@@ -1,4 +1,5 @@
 import pytest
+
 import awesomediff as ad
 
 def test_simple_functions_1():
@@ -40,11 +41,9 @@ def test_simple_functions_1():
     assert f.val == 27
     assert f.der == 54
 
-    try:
+    with pytest.raises(ValueError):
+        # power should be a number
         x**'n'
-    except ValueError:
-        print('power should be a number')
-
     
     #division(truediv)
     x = ad.variable(2)
@@ -54,15 +53,13 @@ def test_simple_functions_1():
     assert f.der == 0.125
 
     x = ad.variable(2)
-    try:
+    with pytest.raises(ZeroDivisionError):
+        # cannot perform division by zero
         x/0
-    except ZeroDivisionError:
-        print('cannot perform division by zero')
 
-    try:
+    with pytest.raises(ValueError):
+        # should be a scalar or instance variable
         x/'n'
-    except ValueError:
-        print('should be a scalar or instance variable')
     
     x = ad.variable(2,2)
     f = x/2
@@ -74,7 +71,6 @@ def test_simple_functions_1():
     f = 4/x
     assert f.val == 1
     assert f.der == -0.25
-
 
 def test_equal():
     x = ad.variable(3.0)

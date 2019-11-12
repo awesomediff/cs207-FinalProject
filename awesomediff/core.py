@@ -1,3 +1,6 @@
+import math
+import numpy as np
+
 class variable:
 
     def __init__(self,val,der=1):
