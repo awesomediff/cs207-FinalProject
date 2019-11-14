@@ -146,8 +146,8 @@ def test_single_variable_functions():
     x14 = ad.variable(a14)
     
     f14 = ad.sin(x14) / (3 - 2*ad.cos(x14))
-    assert f14.val == func14_val(a14)
-    assert f14.der == func14_der(a14)
+    assert np.isclose(f14.val, func14_val(a14))
+    assert np.isclose(f14.der, func14_der(a14))
     
     
     # test sin, cos, truediv, sub, mul
