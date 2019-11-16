@@ -3,7 +3,7 @@ Milestone 1
 
 ## Introduction
 
-AwesomeDiff is a Python 3 package designed by and for Data Scientists to help implement solving algorithms in Machine Learning. The package provides an implementation of the Forward Mode of Automatic Differentiation using operator overloading. AwesomeDiff uses AD to calculate the gradients of commonly used loss functions in Machine Learning, such as mean square errors (MSE).
+`awesomediff` is a Python 3 package designed by and for Data Scientists to help implement solving algorithms in Machine Learning. The package provides an implementation of the Forward Mode of Automatic Differentiation using operator overloading. `awesomediff` uses AD to calculate the gradients of commonly used loss functions in Machine Learning, such as mean square errors (MSE).
 
 Applications of Automatic Differentiation (AD) are numerous and play a key role in a wide range of fields, from demography to finance. We focus on applications in Machine Learning (ML), specifically the need to quickly and accurately compute the gradient of loss functions (i.e. its partial derivative with respect to each of the variables of interest).
 
@@ -18,12 +18,12 @@ There are several approaches for solving derivatives, but there is a tradeoff be
 ## Background
 ### Graph structure of calculations:
 
-Computer programs treat mathematical functions as a series of elementary operations (addition, exponentiation, etc). We can think of complicated functions as a graph consisting of nodes (representing the quantities being operated on) and edges (representing the operations being performed on those quantities). The output of one operation may form the input of another operation, which provides a way to represent nested operations. 
-The user (or the program calling the function) uses input nodes (for example, `x` and `y`) to specify the point at which the function should be evaluated, and the value of the function at that point (for example `f(x,y)`) is represented by a final output node. 
+Computer programs treat mathematical functions as a series of elementary operations (addition, exponentiation, etc). We can think of complicated functions as a graph consisting of nodes (representing the quantities being operated on) and edges (representing the operations being performed on those quantities). The output of one operation may form the input of another operation, which provides a way to represent nested operations.
+The user (or the program calling the function) uses input nodes (for example, `x` and `y`) to specify the point at which the function should be evaluated, and the value of the function at that point (for example `f(x,y)`) is represented by a final output node.
 For example, the loss function MSE can be represented with the following graph:
 ![MSE](resources/MSE.png?raw=true)
 
-### Chain rule 
+### Chain rule
 AD makes use of the fact that the elementary operations have known symbolic derivatives, and it makes use of the chain rule to iteratively update/compute derivatives of potentially complex programs.
 ![Chain Rule](resources/Chain_rule.png?raw=true)
 
@@ -35,11 +35,11 @@ We can think of this in terms of the calculation graph described above: as the p
 
 By pairing the evaluation of the derivative with the evaluation of the function itself, AD achieves machine precision.
 
-## How to Use *AwesomeDiff*
+## How to Use `awesomediff`
 ### Installation
-* The package will be available on 'PyPI.' 
-    - You can either install the package in your local environment or in a virtual environment.  
-* If you have a Python3 environment with numpy installed ready to go, the awesomediff package can be installed using the following code:
+* The package will be available on PyPI.
+    - You can either install the package in your local environment or in a virtual environment.
+* If you have a Python3 environment with `numpy` installed ready to go, the `awesomediff` package can be installed using the following code:
 ```
 pip install awesomediff
 ```
@@ -56,36 +56,36 @@ pip install -r requirements.txt
 ```
 
 ### Usage
-- To use awesomediff, the user should import the library first using code similar to this:
+- To use `awesomediff`, the user should import the library first using code similar to this:
 ```python
 import awesomediff as ad
 ```
-- Generally, the user should initialize an auto differentiation object (known as a `Variable` object in the package) first, for each variable needed in the function, using the module. 
+- Generally, the user should initialize an auto differentiation object (known as a `variable` object in the package) first, for each variable needed in the function, using the module.
 - The user can form functions using the objects initialized to create more complex objects with elementary math operations and functions.
-- The elementary math operations and functions can be performed in the same way as the operations in numpy.
-- The constructor of a 'Variable' object takes in a scalar or a vector.
+- The elementary math operations and functions can be performed in the same way as the operations in `numpy`.
+- The constructor of a `variable` object takes in a scalar or a vector.
 - The user can calculate the derivative(s) and the output value(s) at a targeting evaluation point.
 
-Below are some example scenarios to demonstrate how the module works:  
-  
+Below are some example scenarios to demonstrate how the module works:
+
 #### I. Scalar function
 
-This is the simplest case scenario. The AutoDiff object takes in a function that only involved elementary operations with scalers. In the below example, the AutoDiff object calculates the derivative at 3 for f(x) = 3x+15
+This is the simplest case scenario. The `awesomediff.variable` takes in a function that only involved elementary operations with scalers. In the below example, the `awesomediff.variable` object calculates the derivative at 3 for f(x) = 3x+15
 ```python
 import awesomediff as ad
 
-# instantiate an AutoDiff object at the given scalar point
+# instantiate an awesomediff.variable object at the given scalar point
 x = ad.variable(5.0)
 
 # create the function needed for differentiation
 scalarFunc = 5*x**2
 
-# get the derivative and output value 
+# get the derivative and output value
 print(scalarFunc.val())
 print(scalarFunc.der())
 ```
 
-The AutoDiff object can also take in functions that involve sine, cosine, and exponential terms. The next example shows that the AutoDiff handles these functions the same way as using numpy math functions.
+The `awesomediff.variable` can also take in functions that involve sine, cosine, and exponential terms. The next example shows that `awesomediff` handles these functions the same way as using `numpy` math functions.
 ```python
 import awesomediff as ad
 
@@ -100,10 +100,10 @@ print(funcExp.val(), funcExp.der())
 
 #### II. Vector function
 
-The AutoDiff object can take in vectors as inputs:
+The `awesomediff.variable` can take in vectors as inputs:
 ```python
 import awesomediff as ad
-# instantiate an AutoDiff object with vector inputs
+# instantiate an awesomediff.variable with vector inputs
 x = ad.variable([1,2,3])
 
 # create the function needed for differentiation
@@ -115,11 +115,11 @@ print(funcVector.val(), funcVector.der())
 
 #### III. Scalar and vector functions with multiple variables
 
-Differentiate multivariable functions can be used the same way with scalar and vector inputs.  
+Differentiate multivariable functions can be used the same way with scalar and vector inputs.
 ```python
 import awesomediff as ad
 
-# instantiate two AutoDiff objects with scalar inputs
+# instantiate two awesomediff.variables with scalar inputs
 x = ad.variable(3.0)
 y = ad.variable(22.0)
 
@@ -128,30 +128,29 @@ funcMulti1 = 3*x+24*y
 
 print(funcMulti1.val(), ffuncMulti1.der())
 
-# instantiate two AutoDiff objects with vector inputs
+# instantiate two awesomediff.variables with vector inputs
 w = ad.variable([1,2,3])
 z = ad.variable([4,5,6])
 
 funcMulti2 = 3*w+24*z
 
 print(funcMulti2.val(), funcMulti2.der())
-
 ```
 
 ## Software Organization
-- An overview of how we are organizing our software package. 
-  * Directory structure  
+- An overview of how we are organizing our software package.
+  * Directory structure
   ```
    cs207-FinalProject\
         awesomediff\
-            AutoDiff.py
-            Efunc.py
-            LossFunction.py
+            core.py
+            func.py
+            solvers.py
         tests\
             __init__.py
             test_diff.py
-            test_efunc.py
-            test_loss.py
+            test_func.py
+            test_solvers.py
         docs\
             README.md
         .gitignore
@@ -161,19 +160,20 @@ print(funcMulti2.val(), funcMulti2.der())
         requirements.txt
   ```
   * Modules
-    - `AutoDiff`
-      - The main module that defines an AutoDiff object. It determines the properties of deriving a derivate using automatic differentiation.
-    - `Efunc`
+    - `core.py`
+      - The main module that defines the `variable` and `function` classes. It determines the properties of deriving a derivate using automatic differentiation.
+    - `func.py`
       - Contains elementary math functions including `sin`, `cos`, `log`, `exp`. These functions are written on the basis of the `numpy` package.
-    - `LossFunction`
-      - The module for the advanced feature (we haven’t decided what advanced feature we are going to implement now).
-    - `test_diff`
-      - Contains tests for different cases when using the package.  
+    - `solvers.py`
+      - A module for the advanced features, which fill contain solvers to implement machine learning loss functions.
   * Test
-    - The tests of the package are located in `tests` directory.
+    - The tests of the package are located in `tests` directory:
+      - `test_diff.py`
+      - `test_func.py`
+      - `test_solvers.py`
     - We use Travis CI to run tests automatically, and we use CodeCov for checking code coverage automatically.
     - The [`README`](../README.md) file presents badges that show the tests performance and code coverage monitored by Travis CI and CodeCov.
-  * Distribution  
+  * Distribution
     - The `awesomediff` package will be available on PyPI.
     - The installation code can be found in the ["How to use `awesomediff`"](#how-to-use-awesomediff) section.
   * Dependency
@@ -183,75 +183,100 @@ print(funcMulti2.val(), funcMulti2.der())
 
 ## Implementation
 
-#### `AutoDiff` Module
-The module `AutoDiff` consists of the class `Variable`. `Variable` class can be used to instantiate variables of a function for which the user wishes to compute the derivative. When instantiating the `Variable` class, the user will input the value of the variable at which to calculate the function's derivative and the total number of variables in the function.
+#### `awesomediff` Module
+The module `awesomediff` consists of the classes `variable` and `function`. The `variable` class can be used to instantiate variables that can be use in a function to find its value and derivative at a given point. The `function` class acts as a container that will build `variable` objects and evaluate the value and derivative for a function, values, and seed given by the user.
 
 ###### Example
-To calculate the derivative of f(x,y) at x = a and y = b, the user will first need to instantiate `Variable` objects. 
+To calculate the derivative of f(x,y) at x = a and y = b, the user will first need to instantiate `variable` objects.
 
+```python
+# Method 1:
+x = ad.variable(val=5, seed=[1,0])
+y = ad.variable(val=4, seed=[0,1])
+f = 2*x + y^2
+print(f.val())  # 26
+print(f.der())  # [2,8]
+
+# Method 2:
+func = lambda x,y: 2*x + y^2
+f = ad.function(func=func, vals=[5,4], seed=[[1,0],[0,1]], labels=['x','y'] )
+print(f.val)  # 26
+print(f.der())  # [2,8]
+print(f.der('x'))  # 2
+print(f.der('y'))  # 8
 ```
-x = Variable(a, 2)
-y = Variable(b, 2)
-```
-The second parameter, 2, indicates that the function we wish to calculate the derivative for is a function of 2 variables. 
 
 
-##### `Variable` Class Attributes
-`Variable` class have two attributes: `self.val` and `self.der`, which keep track of the value of the elementary function and the value of the elementary function’s derivative, respectively. 
+##### `variable` Class Attributes
+`variable` class have two attributes: `self.val` and `self.der`, which keep track of the value of the elementary function and the value of the elementary function’s derivative, respectively.
 
-`self.val` is initialized with an int or a float that the user passed in as the first parameter of `Variable` class. ` 
+`self.val` is initialized with an int or a float that the user passed in as the first parameter of `variable` class. `
 
-`self.der` is a numpy array containing all the partial derivative values of the elementary function. The length of `self.der` will be initialized with the user’s input for the number of variables in the function of interest. 
+`self.der` is a `numpy` array containing all the partial derivative values of the elementary function. The length of `self.der` will be initialized with the user’s input for the number of variables in the function of interest.
 
 For example, when calculating the derivative of f(x,y), `self.der` will have a length of 2 where the first element is the partial derivative value of the elementary function with respect to x and the second element is the partial derivative value of the elementary function with respect to y.
 
-##### `Variable` Class Methods
-`Variable` class overloads the following operations:  
-`__add__`  
-`__sub__`  
-`__mul__`  
-`__truediv__`  
-`__pow__`  
-`Variable` class has the corresponding `r` methods to make the above operations commutative.   
+##### `variable` Class Methods
+`variable` class overloads the following operations (and their respective reverse methods):
+`__add__`
+`__sub__`
+`__mul__`
+`__truediv__`
+`__pow__`
+`__exp__`
 
 
 ##### Elementary Operations
-The module should not only be able to compute derivatives of variables that have been added, subtracted, multiplied, divided, or exponentiated by a scalar but also compute derivatives of sum, product, division, or powers of variables (e.g. derivative of x + y, x / y, x * y, x^y). To achieve the latter, each of the operation methods defined in `Variable` handles operations between a scalar and `Variable` object separately from operations between two `Variable` objects
+The module should not only be able to compute derivatives of variables that have been added, subtracted, multiplied, divided, or exponentiated by a scalar but also compute derivatives of sum, product, division, or powers of variables (e.g. derivative of x + y, x / y, x * y, x^y). To achieve the latter, each of the operation methods defined in `variable` handles operations between a scalar and `variable` object separately from operations between two `variable` objects
 
 ###### Example
-```
+```python
 def __add__(x, y):
-	# if x is a Variable object while y is a scalar:
+	# if x is a variable object while y is a scalar:
 		# value of derivative is unchanged
-	# if self and other are both Variable objects:
-		# value of derivative is sum of derivative values for x and y 
+	# if self and other are both variable objects:
+		# value of derivative is sum of derivative values for x and y
+
+  try:
+    # If other is a variable object:
+    other_val = other.val
+    other_der = other.der
+  except:
+    # If other is a scalar:
+    other_val = other
+    other_der = 0  # A scalar has zero derivative.
+  new_val = self.val + other_val
+  new_der = self.der + other_der  # Derivative of sum is sum of derivatives.
+  result = ad.variable(new_val,new_der)
+  # Return a variable object:
+  return result
 ```
 
-#### `EFunc` Module
-`Efunc` module contains functions defining each of the following elementary functions:  
+#### `func` Module
+The `func` module contains functions defining each of the following elementary functions:
 
-`sqrt`  
-`exp`  
-`ln`  
-`log` (logarithm of any chosen base)  
-`sin`, `cos`, `tan`  
-`arcsin`, `arccos`, `arctan`  
+`sqrt`
+`exp`
+`ln`
+`log` (logarithm of any chosen base)
+`sin`, `cos`, `tan`
+`arcsin`, `arccos`, `arctan`
 
-`Efunc` module will rely on the numpy package to evaluate the above elementary functions. Functions for each of the elementary function will define how these operations should be doen on scalars as well as `Variable` objects. Take for example, the sin function in the `Efunc` module. 
+The `func` module relies on the `numpy` package to evaluate the above elementary functions. The methods in the `func` module define how to perform elementary operations on scalars as well as `variable` objects. Take for example, the `sin` function in the `func` module.
 
-```
+```python
 def sin(x):
-# if x is a scalar:
-	# return np.sin(x)
-# if x is a Variable object:
-	# val = np.sin(x.val)
-	# der = np.cos(x.val) * x.der
-	# f = Variable(val)
-	# f.der = der
-	# return f – returns a Variable object
+  try:
+    # If x is a variable object:
+    val = np.sin(x.val)
+    der = np.cos(x.val) * x.der
+  except:
+    # If x is a scalar:
+    val = np.sin(x)
+    der = 0
+  result = ad.variable(val,der)
+  # Return a variable object:
+  return result
 ```
 
-`Efunc` module is imported into `AutoDiff` module so that when `AutoDiff` module alone is imported by the user, the user can directly use the elementary functions on the `Variable` objects. 
-
-`AutoDiff` module contains a function that handles vector functions. A vector function can be thought of as a list of functions. Therefore we can use the `Variable` class to compute derivatives of each of the component functions and return the outputs as a multi-dimensional array. 
-
+The `awesomediff` module is set up such that the `core` and `func` modules are both imported. The user can interact with functions and classes in both modules by importin `import awesomediff as ad`.
