@@ -193,63 +193,121 @@ print(funcMulti2.val(), funcMulti2.der())
 
 ### `awesomediff` package structure
 
-#### `awesomediff` Module
-The module `awesomediff` consists of the classes `variable` and `function`. The `variable` class can be used to instantiate variables that can be use in a function to find its value and derivative at a given point. The `function` class acts as a container that will build `variable` objects and evaluate the value and derivative for a function, values, and seed given by the user.
+The automatic differentiation functionality is stored in the `core` and `func` modules. The applications to machine learning cost functions are stored in the `solvers` modules. Additionally, we provide testing modules for each of these implementation modules.
 
-###### Example
-To calculate the derivative of f(x,y) at x = a and y = b, the user will first need to instantiate `variable` objects.
+The `awesomediff` package abstracts these different modules and allows users to access all functionality directly from the `awesomediff` namespace. We recommend the following import convention:
+```python
+import awesomediff as ad
+```
+
+The core data structure of the `awesomediff` package is the `variable` object, which represents the value and derivative of a function and defines how it should behave when [elementary operations](#Elementary-Operations) are performed on it (perhaps in conjunction with another function).
+
+We also provide a `function` class, which provides a wrapper for performing functions of multiple variables and with multiple input values. We expect users to interact mainly with the `function` class, although they may implement simple functions directly with the `variable` class.
+
+The `awesomediff` package also provides tools for data scientists to apply AD to Machine Learning tasks. The `solvers` module contains loss functions and solving routines to implement optimization tasks such as gradient descent.
+
+_(**Note:** As of November 2019, multivariate functionality and machine learning applications have not yet been implemented. Please see the [Roadmap](#Roadmap-for-Future-Development) section below for more details on how we plan to implement these features.)_
+
+### The `variable` Class
+
+The `variable` object is the core data structure of `awesomediff`'s AD functionality. It represents a node in the execution graph of a function, and stores the variable and derivate of the function at that node. It also defines how a `variable` should behave when an [elementary operation](#Elementary-Operations) elementary function is performed on it (perhaps in conjunction with a numeric object or another `variable` object).
+
+All elementary operations performed on `variable` instances return new `variable` instances with appropriate values and derivatives, which allows them to propagate through a function graph and guarantees that the result will be a `variable`, with a value and derivative that the user can access.
+
+`aweseomdiff`'s implementation of the forward mode of AD does not explicitly define a function graph. Instead, it overloads Python's operators (and defines special functions for common operations like `log` and `sin`), and allows Python's interpreter to build the function graph implicitly as it evaluates the functions.
+
+For simple functions, users can create `variable` objects with a specified value and derivative seed. The seed may be a scalar, or a vector of length `n`, where `n` is the number of variables in the function. (For more complex functions, we recommend using a `function` objects, which handles the creation of `variable` objects to avoid dimensionality issues.)
+
+The `variable` class is immutable. It has two attributes, `.val` and `.der`, which store the value and derivative of the function. (In the current implementation, both are scalars; future implementations will store derivatives as a vector.)
+
+The example below demonstrates how a `variable` can be created and used in functions to calculate the derivative and variable of any univariate function of [supported elementary operations](#Elementary-Operations).
+
+#### Demo 1: Univariate functions
+
+**Evaluating `f(x)=3*sin(0.5*x)^2` at `x=5`.**
+
+```python
+import math
+import awesomediff as ad
+
+# Method 1:
+x = ad.variable(val=math.pi)
+f = 3*ad.sin(0.5*x)**2
+print(f.val)  # 3
+print(f.der)  # 0
+
+# Method 2:
+calc_area = lambda r: math.pi*r**2  # Area of a circle.
+radius = ad.variable(10)
+area = calc_area(radius)
+print(area.val)  # 314.1592653589793==100*math.pi
+print(area.der)  # 62.83185307179586==20*math.pi
+
+# Method 3:
+def exp_cdf(x,rate):
+  # CDF of exponential distribution:
+  return 1-ad.exp(-rate*x)
+x = ad.variable(0.5)
+result = exp_cdf(x=x,rate=5)
+cdf = result.val
+pdf = result.der
+print(cdf)  # 0.9179150013761012
+print(pdf)  # 0.410424993119494
+```
+
+### The `function` Class
+
+_(**Note:** The `function` class is not yet implemented. It will be added as part of the multivariate functionality described in the [Roadmap](#Roadmap-for-Future-Development) section below.)_
+
+The `function` class takes as inputs a function (defined which uses any elementary operations supported by `awesomediff`), a list of values (possibly vectors) at which to evaluate the function, and a matrix representing the seed of the derivative. It then evaluates the function and derivative using the specified values and seed, and provides methods for the user to access the results. Optionally, users can provide a list of labels (such as 'x' and 'y') that can be used to access values and partial derivatives for a specific variable.
+
+The `function` class takes as arguments a user-defined function of `n` inputs and `m` outputs, a list of `n` values (each corresponding to the initial value of one of the input variables) and an `n`-by-`n` seed for the derivative.
+
+By default, the seed is is set to an identity matrix, which will produce the partial derivative with respect to each of the variables.
+
+The `function` class verifies that the inputs have coherent dimensions, then wraps each value in a `variable`, evaluates the function on those variables, and stores the values and derivatives for the user to access.
+
+#### Demo 2: Multivariate functions (future)
+
+To calculate the derivative of f(x,y) at x=5 and y=4, the user can instantiate `variable` objects directly or use a `function` object.
 
 ```python
 # Method 1:
 x = ad.variable(val=5, seed=[1,0])
 y = ad.variable(val=4, seed=[0,1])
 f = 2*x + y^2
-print(f.val())  # 26
-print(f.der())  # [2,8]
+print(f.val)  # 26
+print(f.der)  # [2,8]
 
 # Method 2:
 func = lambda x,y: 2*x + y^2
 f = ad.function(func=func, vals=[5,4], seed=[[1,0],[0,1]], labels=['x','y'] )
 print(f.val)  # 26
-print(f.der())  # [2,8]
-print(f.der('x'))  # 2
-print(f.der('y'))  # 8
+print(f.der)  # [2,8]
+print(f.der['x'])  # 2
+print(f.der['y'])  # 8
 ```
 
-#### `variable` class
-
-`variable` class have two attributes: `self.val` and `self.der`, which keep track of the value of the elementary function and the value of the elementary function’s derivative, respectively.
-
-`self.val` is initialized with an int or a float that the user passed in as the first parameter of `variable` class. `
-
-`self.der` is a `numpy` array containing all the partial derivative values of the elementary function. The length of `self.der` will be initialized with the user’s input for the number of variables in the function of interest.
-
-For example, when calculating the derivative of f(x,y), `self.der` will have a length of 2 where the first element is the partial derivative value of the elementary function with respect to x and the second element is the partial derivative value of the elementary function with respect to y.
-
-### `variable` Class Methods
-
-`variable` class overloads the following operations (and their respective reverse methods):
-`__add__`
-`__sub__`
-`__mul__`
-`__truediv__`
-`__pow__`
-`__exp__`
-
+_(Note: The current implementation exposes the derivative and variable to the user as properties. In future implementations, we plan to update the interface so that users can also access derivatives with a function that allows them to specify which variable's derivative to return. The example above assumes for simplicity that the user provides labels for each variable which are uses as the keys of a dictionary that stores the derivatives.)_
 
 ### Elementary Operations
 
-The module should not only be able to compute derivatives of variables that have been added, subtracted, multiplied, divided, or exponentiated by a scalar but also compute derivatives of sum, product, division, or powers of variables (e.g. derivative of x + y, x / y, x * y, x^y). To achieve the latter, each of the operation methods defined in `variable` handles operations between a scalar and `variable` object separately from operations between two `variable` objects
+The module should not only be able to compute derivatives of variables that have been added, subtracted, multiplied, divided, or exponentiated by a scalar but also compute derivatives of sum, product, division, or powers of variables (e.g. derivative of `x + y`, `x / y`, `x * y`, `x**y`). To achieve the latter, each of the operation methods defined in `variable` handles operations between a scalar and `variable` object separately from operations between two `variable` objects.
 
-#### Example
+The `variable` class overloads the following unary operations:
+- `__neg__`
+
+The `variable` class overloads the following binary operations (and their respective reverse methods):
+- `__add__`
+- `__sub__`
+- `__mul__`
+- `__truediv__`
+- `__pow__`
+
+Each binary operator acts on the `variable` instance and can accept a scalar or a another `variable` instance as its other argument. For example, addition is overloaded in the following way:
 
 ```python
 def __add__(x, y):
-	# if x is a variable object while y is a scalar:
-		# value of derivative is unchanged
-	# if self and other are both variable objects:
-		# value of derivative is sum of derivative values for x and y
-
   try:
     # If other is a variable object:
     other_val = other.val
@@ -265,18 +323,18 @@ def __add__(x, y):
   return result
 ```
 
-### `func` Module
+The `func` module contains functions defining each of the following elementary functions (as well as their corresponding reverse operations):
 
-The `func` module contains functions defining each of the following elementary functions:
+- `sqrt`
+- `exp`
+- `ln`
+- `log` (logarithm of any chosen base)
+- `sin`, `cos`, `tan`
+- `arcsin`, `arccos`, `arctan` (not implemented yet)
 
-`sqrt`
-`exp`
-`ln`
-`log` (logarithm of any chosen base)
-`sin`, `cos`, `tan`
-`arcsin`, `arccos`, `arctan`
+The `func` module relies on the `numpy` package to evaluate the above elementary functions. The methods in the `func` module define how to perform elementary operations on scalars as well as `variable` objects. 
 
-The `func` module relies on the `numpy` package to evaluate the above elementary functions. The methods in the `func` module define how to perform elementary operations on scalars as well as `variable` objects. Take for example, the `sin` function in the `func` module.
+For example, the `sin` function uses `numpy.sin` and `numpy.cos` to calculate value and derivative respectively. When a scalar input is detected, it is given a null derivative (i.e. treated as a constant). Like most `awesomediff` functions, `sin` returns a `variable` object with the updated value and derivative (perhaps zero). 
 
 ```python
 def sin(x):
@@ -293,4 +351,16 @@ def sin(x):
   return result
 ```
 
-The `awesomediff` module is set up such that the `core` and `func` modules are both imported. The user can interact with functions and classes in both modules by importin `import awesomediff as ad`.
+## Roadmap for Future Development
+
+### Multivariate and Vectorized Implementations
+
+We are working on these features in a [development branch](https://github.com/awesomediff/cs207-FinalProject/blob/docs/docs/milestone2.md) and hope to roll them out soon.
+
+Our multivariate implementation will store the derivatives in `numpy` arrays. This will allow us to store the derivative with respect to multiple seeds. We will make use of vectorized arithmetic with `numpy` to enable quick calculations. Most of our existing operators will easily work with vectors instead of scalars. 
+
+For binary operations, we will verify that the derivatives of each `variable` have the same dimensions. If that is not the case, we will return an error. We will also provide a `function` class that acts as a wrapper to build and manage `variable` instances with the appropriate dimensions for the input values and seed the user provides.
+
+We discuss this this functionality of this `function` class and sketch out a demo of how the user will interact with it in the[`function` Class section (above)](#The-function-Class).
+
+### Machine Learning Applications
