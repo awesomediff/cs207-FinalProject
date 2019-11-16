@@ -16,6 +16,7 @@ There are several approaches for solving derivatives, but there is a tradeoff be
 
 
 ## Background
+
 ### Graph structure of calculations:
 
 Computer programs treat mathematical functions as a series of elementary operations (addition, exponentiation, etc). We can think of complicated functions as a graph consisting of nodes (representing the quantities being operated on) and edges (representing the operations being performed on those quantities). The output of one operation may form the input of another operation, which provides a way to represent nested operations.
@@ -24,6 +25,7 @@ For example, the loss function MSE can be represented with the following graph:
 ![MSE](resources/MSE.png?raw=true)
 
 ### Chain rule
+
 AD makes use of the fact that the elementary operations have known symbolic derivatives, and it makes use of the chain rule to iteratively update/compute derivatives of potentially complex programs.
 ![Chain Rule](resources/Chain_rule.png?raw=true)
 
@@ -36,7 +38,9 @@ We can think of this in terms of the calculation graph described above: as the p
 By pairing the evaluation of the derivative with the evaluation of the function itself, AD achieves machine precision.
 
 ## How to Use `awesomediff`
+
 ### Installation
+
 * The package will be available on PyPI.
     - You can either install the package in your local environment or in a virtual environment.
 * If you have a Python3 environment with `numpy` installed ready to go, the `awesomediff` package can be installed using the following code:
@@ -56,6 +60,7 @@ pip install -r requirements.txt
 ```
 
 ### Usage
+
 - To use `awesomediff`, the user should import the library first using code similar to this:
 ```python
 import awesomediff as ad
@@ -138,6 +143,7 @@ print(funcMulti2.val(), funcMulti2.der())
 ```
 
 ## Software Organization
+
 - An overview of how we are organizing our software package.
   * Directory structure
   ```
@@ -183,7 +189,9 @@ print(funcMulti2.val(), funcMulti2.der())
   * Package
     - We are not using a framework because this package is relatively straightforward. We will follow the templates and tutorials on PyPI for the packaging process
 
-## Implementation
+## Implementation Details
+
+### `awesomediff` package structure
 
 #### `awesomediff` Module
 The module `awesomediff` consists of the classes `variable` and `function`. The `variable` class can be used to instantiate variables that can be use in a function to find its value and derivative at a given point. The `function` class acts as a container that will build `variable` objects and evaluate the value and derivative for a function, values, and seed given by the user.
@@ -208,8 +216,8 @@ print(f.der('x'))  # 2
 print(f.der('y'))  # 8
 ```
 
+#### `variable` class
 
-##### `variable` Class Attributes
 `variable` class have two attributes: `self.val` and `self.der`, which keep track of the value of the elementary function and the value of the elementary function’s derivative, respectively.
 
 `self.val` is initialized with an int or a float that the user passed in as the first parameter of `variable` class. `
@@ -218,7 +226,8 @@ print(f.der('y'))  # 8
 
 For example, when calculating the derivative of f(x,y), `self.der` will have a length of 2 where the first element is the partial derivative value of the elementary function with respect to x and the second element is the partial derivative value of the elementary function with respect to y.
 
-##### `variable` Class Methods
+### `variable` Class Methods
+
 `variable` class overloads the following operations (and their respective reverse methods):
 `__add__`
 `__sub__`
@@ -228,10 +237,12 @@ For example, when calculating the derivative of f(x,y), `self.der` will have a l
 `__exp__`
 
 
-##### Elementary Operations
+### Elementary Operations
+
 The module should not only be able to compute derivatives of variables that have been added, subtracted, multiplied, divided, or exponentiated by a scalar but also compute derivatives of sum, product, division, or powers of variables (e.g. derivative of x + y, x / y, x * y, x^y). To achieve the latter, each of the operation methods defined in `variable` handles operations between a scalar and `variable` object separately from operations between two `variable` objects
 
-###### Example
+#### Example
+
 ```python
 def __add__(x, y):
 	# if x is a variable object while y is a scalar:
@@ -254,7 +265,8 @@ def __add__(x, y):
   return result
 ```
 
-#### `func` Module
+### `func` Module
+
 The `func` module contains functions defining each of the following elementary functions:
 
 `sqrt`
