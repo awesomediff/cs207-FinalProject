@@ -166,12 +166,14 @@ print(funcMulti2.val(), funcMulti2.der())
       - Contains elementary math functions including `sin`, `cos`, `log`, `exp`. These functions are written on the basis of the `numpy` package.
     - `solvers.py`
       - A module for the advanced features, which fill contain solvers to implement machine learning loss functions.
-  * Test
+  * Testing
     - The tests of the package are located in `tests` directory:
       - `test_diff.py`
       - `test_func.py`
       - `test_solvers.py`
-    - We use Travis CI to run tests automatically, and we use CodeCov for checking code coverage automatically.
+    - The tests follow the naming conventions of the `pytest` package, and can be executed by running `pytest` from anywhere in the package directory.
+    - We also use Travis CI's GitHub integration to run tests automatically when new commits are pushed.
+    - Similarly, we use CodeCov to automatically check for code coverage in the GitHub repository. We seek to maintain at least 90% code coverage.
     - The [`README`](../README.md) file presents badges that show the tests performance and code coverage monitored by Travis CI and CodeCov.
   * Distribution
     - The `awesomediff` package will be available on PyPI.
