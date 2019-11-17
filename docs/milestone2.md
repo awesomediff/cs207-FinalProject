@@ -364,3 +364,19 @@ For binary operations, we will verify that the derivatives of each `variable` ha
 We discuss the functionality of this `function` class and sketch out a demo of how the user will interact with it in the[`function` Class section (above)](#The-function-Class).
 
 ### Machine Learning Applications
+
+The Awesomediff Team's interest in automatic differentiation is driven by Data Scientists' need for efficient and accurate ways of repeatedly evaluating derivatives as part of optimization problems in Machine Learning.
+
+We will showcase the power of automatic differentiation by building a gradient descent solver that leverages `awesomediff`'s functionality to find the minimum of a differentiable cost function. We will provide several cost functions, including mean squared error.
+
+We would also like to provide an implementation of the Fisher Scoring Algorithm (discussed [here](https://stats.stackexchange.com/questions/176351/implement-fisher-scoring-for-linear-regression) for example) to approximate the Maximum Likelihood Estimators for linear regression.
+
+### Additional Use Cases
+
+We hope that the loss/scoring functions we include in our package may have applications beyond the world of Machine Learning. We plan to build a small demo of an Automatic Market Maker (AMM) that uses a [logarithmic scoring function](https://en.wikipedia.org/wiki/Scoring_rule#Logarithmic_scoring_rule).
+
+AMMs are used to build prediction markets where individuals can purchase contacts that pay out if a certain event occurs. The goal of the AMM is to aggregate information about participants' beliefs in order to obtain a prediction of the probability associated with an event occurring. They provide monetary payouts in order to incentivize participation of people who have credible information about what they are trying to predict. The have been used, for example, to forecast the results of elections or sales of a particular product.
+
+Participants who think the market's estimated probability is too low or too high may purchase contracts in order to make a profit. The AMM automatically adjusts prices after each transaction, such that the prices always reflect the market's current belief of the probability it is trying to estimate. 
+
+An AMM uses a scoring function to determine the price of each transaction, and the derivative of that function to estimate the market's belief about the probability of each event occurring. Since AMMs can issue contracts for numerous possible outcomes, they need to be able to evaluate many partial derivatives.
