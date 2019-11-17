@@ -158,5 +158,5 @@ def test_single_variable_functions():
     x15 = ad.variable(a15)
     
     f15 = 3*x15**(-4) - x15**2 * ad.tan(x15)
-    assert f15.val == func15_val(a15)
-    assert f15.der == func15_der(a15)
+    assert np.isclose(f15.val, func15_val(a15))
+    assert np.isclose(f15.der, func15_der(a15))
