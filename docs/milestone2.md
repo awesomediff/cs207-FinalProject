@@ -380,3 +380,5 @@ AMMs are used to build prediction markets where individuals can purchase contact
 Participants who think the market's estimated probability is too low or too high may purchase contracts in order to make a profit. The AMM automatically adjusts prices after each transaction, such that the prices always reflect the market's current belief of the probability it is trying to estimate. 
 
 An AMM uses a scoring function to determine the price of each transaction, and the derivative of that function to estimate the market's belief about the probability of each event occurring. Since AMMs can issue contracts for numerous possible outcomes, they need to be able to evaluate many partial derivatives.
+
+AMMs also have an associative property: the effect on cost and its derivative must be the same for one large transaction or a  sequence of smaller transactions that purchase an equivalent number of contracts. This will allow us to demonstrate that `awesomediff` is evaluating derivatives without loss of accuracy.
