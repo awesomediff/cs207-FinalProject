@@ -361,6 +361,6 @@ Our multivariate implementation will store the derivatives in `numpy` arrays. Th
 
 For binary operations, we will verify that the derivatives of each `variable` have the same dimensions. If that is not the case, we will return an error. We will also provide a `function` class that acts as a wrapper to build and manage `variable` instances with the appropriate dimensions for the input values and seed the user provides.
 
-We discuss this this functionality of this `function` class and sketch out a demo of how the user will interact with it in the[`function` Class section (above)](#The-function-Class).
+We discuss the functionality of this `function` class and sketch out a demo of how the user will interact with it in the[`function` Class section (above)](#The-function-Class).
 
 ### Machine Learning Applications
