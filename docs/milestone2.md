@@ -363,7 +363,9 @@ For binary operations, we will verify that the derivatives of each `variable` ha
 
 We discuss the functionality of this `function` class and sketch out a demo of how the user will interact with it in the[`function` Class section (above)](#The-function-Class).
 
-### Machine Learning Applications
+### Future Features
+
+#### Machine Learning Applications
 
 The Awesomediff Team's interest in automatic differentiation is driven by Data Scientists' need for efficient and accurate ways of repeatedly evaluating derivatives as part of optimization problems in Machine Learning.
 
@@ -371,7 +373,7 @@ We will showcase the power of automatic differentiation by building a [gradient 
 
 We would also like to provide an implementation of the Fisher Scoring Algorithm (discussed [here](https://stats.stackexchange.com/questions/176351/implement-fisher-scoring-for-linear-regression) for example) to approximate the Maximum Likelihood Estimators for linear regression.
 
-### Additional Use Cases
+#### Additional Use Cases
 
 We hope that the loss/scoring functions we include in our package may have applications beyond the world of Machine Learning. We plan to build a small demo of an Automatic Market Maker (AMM) that uses a [logarithmic scoring function](https://en.wikipedia.org/wiki/Scoring_rule#Logarithmic_scoring_rule).
 
