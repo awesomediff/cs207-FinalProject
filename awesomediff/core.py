@@ -159,5 +159,10 @@ class variable:
         new_der = other * self.val ** (other - 1) * self.der
         return variable(val=new_val, der=new_der)
 
-    def __rdiv__(self,other):
-        raise NotImplementedError
+    def __rpow__(self, other):
+        try:
+            new_val = other** self.val
+        except:
+            raise ValueError("{} must be a number.".format(other))
+        new_der = other**self.val * np.log(other)
+        return variable(val=new_val, der=new_der)
