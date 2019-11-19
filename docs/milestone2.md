@@ -37,6 +37,13 @@ We can think of this in terms of the calculation graph described above: as the p
 
 By pairing the evaluation of the derivative with the evaluation of the function itself, AD achieves machine precision.
 
+##Efficiency
+
+Before talking about the efficiency of the automatic differentiation, we can look at the drawbacks of  symbolic differentiation or numerical differentiation. Both of them can be used to compute mathematical expression. A symbolic differentiation program finds the derivative of a given formula with respect to a specified variable, producing a new formula as its output, but applying it for higher order derivatives cannot always ensure a small computational cost.  Numerical differentiation or finite differences suffers round-off errors. Therefore as the number of operation increases, the derivative calculation is not precise to machine precision and it also has stability issues. 
+
+Automatic differentiation, on the other hand, escapes the limitations posed by symbolic differentiation and numerical differentiation. It exploits the idea that the computing the derivative of a function, no matter how complex, can be broken down into a sequence of elementary arithmetic operations (addition, subtraction, multiplication, division) and elementary functions (sin, cos, log, exp, etc.). By drawing the computation graph and applying the chain rule repeatedly to these operations derivatives, the value of the function can be evaluated accurately to machine precision. It is exact, and the speed is comparable to hand-coding derivative. Thus, we design this automatic differentiation package to implement AD, which aims to allow differentiation to occur seamlessly, while users can just focus on their programming tasks.
+
+
 ## How to Use `awesomediff`
 
 ### Installation
