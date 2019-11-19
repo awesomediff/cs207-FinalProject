@@ -1,4 +1,4 @@
-Milestone 1
+Milestone 2
 ===========
 
 ## Introduction
@@ -165,7 +165,7 @@ print(funcMulti2.val(), funcMulti2.der())
             __init__.py
             test_diff.py
             test_func.py
-            test_solvers.py
+            test_variable_methods.py
         docs\
             resources\
                 Chain_rule.png
