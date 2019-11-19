@@ -95,74 +95,105 @@ import awesomediff as ad
 
 Below are some example scenarios to demonstrate how the module works:
 
-#### I. Scalar function
+#### I. Univariate function
 
-This is the simplest case scenario. The `awesomediff.variable` takes in a function that only involved elementary operations with scalers. In the below example, the `awesomediff.variable` object calculates the derivative at 3 for f(x) = 3x+15
-```python
+```
+#import awesomediff
+import math
 import awesomediff as ad
-
-# instantiate an awesomediff.variable object at the given scalar point
-x = ad.variable(5.0)
-
-# create the function needed for differentiation
-scalarFunc = 5*x**2
-
-# get the derivative and output value
-print(scalarFunc.val())
-print(scalarFunc.der())
 ```
 
-The `awesomediff.variable` can also take in functions that involve sine, cosine, and exponential terms. The next example shows that `awesomediff` handles these functions the same way as using `numpy` math functions.
+###### Case 1: Evaluate value and derivative of area = pi * r^2,  r = 10
+
 ```python
-import awesomediff as ad
+# area of a circle
+calc_area = lambda r: math.pi*r**2  
 
-x = ad.variable(3.0)
+# instantiate variable object 
+radius = ad.variable(10)
 
-# a function with an exponential term
-# the exponential function is used in the same way as the exponential funciton in numpy
-funcExp = ad.exp(x)*3+11
+# pass in variable object into lambda function
+area = calc_area(radius)
 
-print(funcExp.val(), funcExp.der())
+# area when radius = 10
+print("area at radius = 10:", area.val) # 314.159 
+
+# derivative of area (i.e. circumference) when radius = 10
+print("circumference at radius = 10:", area.der) # 62.832
 ```
 
-#### II. Vector function
+###### Case 2: Evaluate value and derivative of CDF of exponential distribution 1 - e^(-5x), x = 0.5
+
+```python
+# define CDF of exponential distribution
+def exp_cdf(x,rate):
+    return 1-ad.exp(-rate*x)
+
+# instantiate variable object
+x = ad.variable(0.5)
+
+result = exp_cdf(x=x,rate=5)
+cdf = result.val
+pdf = result.der
+
+# value of CDF function
+print("CDF at x = 0.5", cdf) # 0.918
+
+# value of PDF function (i.e. derivative of CDF)
+print("PDF at x = 0.5", pdf) # 0.410
+```
+
+###### Case 3: Evaluate value and derivative of logistic growth model P(t) = c / (1 + a * e^(-bt)), t = 25
+
+```python
+def logistic_growth(t,a,b,c):
+    return c / (1 + a*ad.exp(-b*t))
+
+t = ad.variable(25)
+
+growth_model = logistic_growth(t, a=83.33, b=-0.162, c=500)
+
+population = growth_model.val
+growth_rate = growth_model.der
+
+# population at t = 25
+print("population at t = 25:", population) # 0.105
+
+# population growth rate at t = 25
+print("population growth rate at t = 25:", growth_rate) #-2.185e-05
+```
+
+###### Case 4: Evaluate value and derivative of logistic growth model f(x) = ln(sqrt((1-x)/(x+1))), x = 0.3 
+
+```python
+# instantiate variable object
+x = ad.variable(0.3)
+
+# define function
+f = lambda x: ad.log(ad.sqrt((1-x)/(x+1)))
+
+# pass in variable object into function
+result = f(x)
+
+# value of funcation at x = 2
+print("value at x = 2:", result.val) # -0.310
+
+# derivative of function at x = 2 
+print("derivative at x = 2:", result.der) # -1.099
+```
+
+#### II. Multivariate function
 
 The `awesomediff.variable` can take in vectors as inputs:
 ```python
-import awesomediff as ad
-# instantiate an awesomediff.variable with vector inputs
-x = ad.variable([1,2,3])
-
-# create the function needed for differentiation
-funcVector = 5*x**2
-
-# print out output values and derivatives
-print(funcVector.val(), funcVector.der())
+func = lambda x,y: 2*x + y^2
+f = ad.function(func=func, vals=[5,4], seed=[[1,0],[0,1]], labels=['x','y'] )
+print(f.val)  # 26
+print(f.der)  # [2,8]
+print(f.der['x'])  # 2
+print(f.der['y'])  # 8
 ```
 
-#### III. Scalar and vector functions with multiple variables
-
-Differentiate multivariable functions can be used the same way with scalar and vector inputs.
-```python
-import awesomediff as ad
-
-# instantiate two awesomediff.variables with scalar inputs
-x = ad.variable(3.0)
-y = ad.variable(22.0)
-
-# a function with more than one variable
-funcMulti1 = 3*x+24*y
-
-print(funcMulti1.val(), ffuncMulti1.der())
-
-# instantiate two awesomediff.variables with vector inputs
-w = ad.variable([1,2,3])
-z = ad.variable([4,5,6])
-
-funcMulti2 = 3*w+24*z
-
-print(funcMulti2.val(), funcMulti2.der())
-```
 
 ## Software Organization
 
@@ -187,6 +218,7 @@ print(funcMulti2.val(), funcMulti2.der())
                 Vector Input Example.png
             milestone1.md
             milestone2.md
+        univariate_demos.ipynb
         .gitignore
         .travis.yml
         README.md
@@ -251,18 +283,9 @@ The `variable` class is immutable. It has two attributes, `.val` and `.der`, whi
 
 The example below demonstrates how a `variable` can be created and used in functions to calculate the derivative and variable of any univariate function of [supported elementary operations](#Elementary-Operations).
 
-#### Demo 1: Univariate functions
-###### Examples below illustrate how to calculate the value and derivative of univariate functions at a single value.
+###### Example: Evaluate value and derivative of f(x) = 3 * sin(0.5x)^2,  x = pi
 
-```
-#import awesomediff
-import math
-import awesomediff as ad
-```
-
-###### Case 1: Evaluate value and derivative of f(x) = 3 * sin(0.5x)^2,  x = pi
-
-```
+```python
 # instantiate variable object
 x = ad.variable(val=math.pi)
 
@@ -275,87 +298,6 @@ print("value at x = pi:", f.val) # 3.0
 # derivative of f(x) at x = pi
 print("derivative at x = pi:", f.der) # 1.837e-16
 ```
-
-###### Case 2: Evaluate value and derivative of area = pi * r^2,  r = 10
-
-```
-# area of a circle
-calc_area = lambda r: math.pi*r**2  
-
-# instantiate variable object 
-radius = ad.variable(10)
-
-# pass in variable object into lambda function
-area = calc_area(radius)
-
-# area when radius = 10
-print("area at radius = 10:", area.val) # 314.159 
-
-# derivative of area (i.e. circumference) when radius = 10
-print("circumference at radius = 10:", area.der) # 62.832
-```
-
-###### Case 3: Evaluate value and derivative of CDF of exponential distribution 1 - e^(-5x), x = 0.5
-
-```
-# define CDF of exponential distribution
-def exp_cdf(x,rate):
-    return 1-ad.exp(-rate*x)
-
-# instantiate variable object
-x = ad.variable(0.5)
-
-result = exp_cdf(x=x,rate=5)
-cdf = result.val
-pdf = result.der
-
-# value of CDF function
-print("CDF at x = 0.5", cdf) # 0.918
-
-# value of PDF function (i.e. derivative of CDF)
-print("PDF at x = 0.5", pdf) # 0.410
-```
-
-
-###### Case 4: Evaluate value and derivative of logistic growth model P(t) = c / (1 + a * e^(-bt)), t = 25
-
-```
-def logistic_growth(t,a,b,c):
-    return c / (1 + a*ad.exp(-b*t))
-
-t = ad.variable(25)
-
-growth_model = logistic_growth(t, a=83.33, b=-0.162, c=500)
-
-population = growth_model.val
-growth_rate = growth_model.der
-
-# population at t = 25
-print("population at t = 25:", population) # 0.105
-
-# population growth rate at t = 25
-print("population growth rate at t = 25:", growth_rate) #-2.185e-05
-```
-
-###### Case 5: Evaluate value and derivative of logistic growth model f(x) = ln(sqrt((1-x)/(x+1))), x = 0.3 
-
-```
-# instantiate variable object
-x = ad.variable(0.3)
-
-# define function
-f = lambda x: ad.log(ad.sqrt((1-x)/(x+1)))
-
-# pass in variable object into function
-result = f(x)
-
-# value of funcation at x = 2
-print("value at x = 2:", result.val) # -0.310
-
-# derivative of function at x = 2 
-print("derivative at x = 2:", result.der) # -1.099
-```
-
 
 
 ### The `function` Class
@@ -370,25 +312,16 @@ By default, the seed is is set to an identity matrix, which will produce the par
 
 The `function` class verifies that the inputs have coherent dimensions, then wraps each value in a `variable`, evaluates the function on those variables, and stores the values and derivatives for the user to access.
 
-#### Demo 2: Multivariate functions (future)
+#### Example: Multivariate functions (future)
 
 To calculate the derivative of f(x,y) at x=5 and y=4, the user can instantiate `variable` objects directly or use a `function` object.
 
 ```python
-# Method 1:
 x = ad.variable(val=5, seed=[1,0])
 y = ad.variable(val=4, seed=[0,1])
 f = 2*x + y^2
 print(f.val)  # 26
 print(f.der)  # [2,8]
-
-# Method 2:
-func = lambda x,y: 2*x + y^2
-f = ad.function(func=func, vals=[5,4], seed=[[1,0],[0,1]], labels=['x','y'] )
-print(f.val)  # 26
-print(f.der)  # [2,8]
-print(f.der['x'])  # 2
-print(f.der['y'])  # 8
 ```
 
 _(Note: The current implementation exposes the derivative and variable to the user as properties. In future implementations, we plan to update the interface so that users can also access derivatives with a function that allows them to specify which variable's derivative to return. The example above assumes for simplicity that the user provides labels for each variable which are uses as the keys of a dictionary that stores the derivatives.)_
