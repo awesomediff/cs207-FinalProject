@@ -177,8 +177,8 @@ print(funcMulti2.val(), funcMulti2.der())
             solvers.py
         tests\
             __init__.py
-            test_diff.py
-            test_func.py
+            test_function_methods.py
+            test_functions.py
             test_variable_methods.py
         docs\
             resources\
@@ -203,9 +203,9 @@ print(funcMulti2.val(), funcMulti2.der())
       - A module for the advanced features, which fill contain solvers to implement machine learning loss functions.
   * Testing
     - The tests of the package are located in `tests` directory:
-      - `test_diff.py`
-      - `test_func.py`
-      - `test_solvers.py`
+      - `test_function_methods.py`
+      - `test_functions.py`
+      - `test_variable_methods.py`
     - The tests follow the naming conventions of the `pytest` package, and can be executed by running `pytest` from anywhere in the package directory.
     - We also use Travis CI's GitHub integration to run tests automatically when new commits are pushed.
     - Similarly, we use CodeCov to automatically check for code coverage in the GitHub repository. We seek to maintain at least 90% code coverage.
