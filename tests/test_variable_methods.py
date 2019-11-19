@@ -73,6 +73,17 @@ def test_operations():
     assert f.val == 1
     assert f.der == -0.25
 
+    #rpow
+    a = 3
+    x = ad.variable(a)
+    f = 2**x
+    assert f.val == 8
+    assert f.der == 2**a * np.log(2)
+
+    with pytest.raises(ValueError):
+        # exponent should be a number
+        's'**x
+
 def test_equal():
     x = ad.variable(3.0)
     y = ad.variable(3.0)
