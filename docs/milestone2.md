@@ -253,7 +253,7 @@ import math
 import awesomediff as ad
 ```
 
-###### Case 1: Evaluate value and derivative of $f(x) = 3sin(0.5x)^2,  x = \pi$
+###### Case 1: Evaluate value and derivative of f(x) = 3 * sin(0.5x)^2,  x = pi
 
 ```
 # instantiate variable object
@@ -269,7 +269,7 @@ print("value at x = pi:", f.val) # 3.0
 print("derivative at x = pi:", f.der) # 1.837e-16
 ```
 
-###### Case 2: Evaluate value and derivative of $\text{area} = \pi r^2,  r = 10$
+###### Case 2: Evaluate value and derivative of area = pi * r^2,  r = 10
 
 ```
 # area of a circle
@@ -288,7 +288,7 @@ print("area at radius = 10:", area.val) # 314.159
 print("circumference at radius = 10:", area.der) # 62.832
 ```
 
-###### Case 3: Evaluate value and derivative of CDF of exponential distribution $1 - e^{-5x}, x=0.5$
+###### Case 3: Evaluate value and derivative of CDF of exponential distribution 1 - e^(-5x), x = 0.5
 
 ```
 # define CDF of exponential distribution
@@ -310,7 +310,7 @@ print("PDF at x = 0.5", pdf) # 0.410
 ```
 
 
-###### Case 4: Evaluate value and derivative of logistic growth model $P(t) = \frac{c}{1+ae^{-bt}}, t=25$
+###### Case 4: Evaluate value and derivative of logistic growth model P(t) = c / (1 + a * e^(-bt)), t = 25
 
 ```
 def logistic_growth(t,a,b,c):
@@ -330,7 +330,7 @@ print("population at t = 25:", population) # 0.105
 print("population growth rate at t = 25:", growth_rate) #-2.185e-05
 ```
 
-###### Case 5: Evaluate value and derivative of logistic growth model $f(x) = ln\sqrt{\frac{1-x}{x+1}}, x=0.3$
+###### Case 5: Evaluate value and derivative of logistic growth model f(x) = ln(sqrt((1-x)/(x+1))), x = 0.3 
 
 ```
 # instantiate variable object
