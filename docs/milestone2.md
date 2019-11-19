@@ -27,17 +27,24 @@ For example, the loss function MSE can be represented with the following graph:
 ### Chain rule
 
 AD makes use of the fact that the elementary operations have known symbolic derivatives, and it makes use of the chain rule to iteratively update/compute derivatives of potentially complex programs.
+
+Univariate function case: given the function f(u(t)), we want the derivative of f with respect to t, by applying the chain rule, we get:
+
 ![Chain Rule](resources/Chain_rule.png?raw=true)
 
 As the function is evaluated at a given point, the forward mode of AD also evaluates the derivative of each elementary operation and applies the chain rule to keep track of compute the derivative of the function at that point. AD also has a reverse mode, which relies on the same principles but applies the chain rule in the opposite direction of traversing the calculation graph.
 
 We can think of this in terms of the calculation graph described above: as the program traverses the graph to get from input(s) to output(s), and computes the value at each node, the forward mode simultaneously computes the value of the functions derivative at each node. The derivative value associated with the output node is (to machine precision) the value of the functions derivative at the point where the function is being evaluated. The AD approach can also be used to calculate the gradient or Jacobian of functions of multiple variables.
 
-![Vector Input Example](resources/Vector%20Input%20Example.png?raw=true)
+For vector of multi-variate functions, 
+![vector functions](resources/vector_of_func.png?raw=true)
+the chain rule states that:
+![jacobian](resources/jacobian.png?raw=true)
+
 
 By pairing the evaluation of the derivative with the evaluation of the function itself, AD achieves machine precision.
 
-##Efficiency
+## Efficiency
 
 Before talking about the efficiency of the automatic differentiation, we can look at the drawbacks of  symbolic differentiation or numerical differentiation. Both of them can be used to compute mathematical expression. A symbolic differentiation program finds the derivative of a given formula with respect to a specified variable, producing a new formula as its output, but applying it for higher order derivatives cannot always ensure a small computational cost.  Numerical differentiation or finite differences suffers round-off errors. Therefore as the number of operation increases, the derivative calculation is not precise to machine precision and it also has stability issues. 
 
