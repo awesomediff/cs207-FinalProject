@@ -47,16 +47,24 @@ By pairing the evaluation of the derivative with the evaluation of the function 
 ```
 pip install awesomediff
 ```
-* If you want to install the package in a virtual environment, set up the virtual environment using:
+* Right now, the package is not available on PyPI yet, so install using methods below:
+* Clone the project's git repository to your machine:
 ```
-conda create -n awesomediff python=3.6 anaconda
-source activate awesomediff
 git clone https://github.com/awesomediff/cs207-FinalProject.git
-cd cs207-FinalProject
 ```
-Then install the dependencies using
+* If you want to install the package in a virtual environment, set up the virtual environment in the cloned directory using:
 ```
-pip install -r requirements.txt
+pip3 install virtualenv
+virtualenv -p python3 venv
+source venv/bin/activate
+```
+Then install the dependencies:
+```
+pip3 install -r requirements.txt
+```
+If you want to run the testing with `pytest`, run the following from the root:
+```
+pytest tests/
 ```
 
 ### Usage
@@ -144,11 +152,12 @@ print(funcMulti2.val(), funcMulti2.der())
 
 ## Software Organization
 
-- An overview of how we are organizing our software package.
+- An overview of how we will eventually organize our software package.
   * Directory structure
   ```
    cs207-FinalProject\
         awesomediff\
+            __init__.py
             core.py
             func.py
             solvers.py
@@ -158,11 +167,17 @@ print(funcMulti2.val(), funcMulti2.der())
             test_func.py
             test_solvers.py
         docs\
-            README.md
+            resources\
+                Chain_rule.png
+                MSE.png
+                Vector Input Example.png
+            milestone1.md
+            milestone2.md
         .gitignore
         .travis.yml
         README.md
         setup.cfg
+        setup.py
         requirements.txt
   ```
   * Modules
@@ -185,7 +200,7 @@ print(funcMulti2.val(), funcMulti2.der())
     - The `awesomediff` package will be available on PyPI.
     - The installation code can be found in the ["How to use `awesomediff`"](#how-to-use-awesomediff) section.
   * Dependency
-    - `awesomediff` is dependent on the `numpy` package for elementary math functions.
+    - `awesomediff` is dependent on the `numpy` package for elementary math functions. We also use `pytest` for testing.
   * Package
     - We are not using a framework because this package is relatively straightforward. We will follow the templates and tutorials on PyPI for the packaging process
 
