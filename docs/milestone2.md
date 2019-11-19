@@ -252,37 +252,111 @@ The `variable` class is immutable. It has two attributes, `.val` and `.der`, whi
 The example below demonstrates how a `variable` can be created and used in functions to calculate the derivative and variable of any univariate function of [supported elementary operations](#Elementary-Operations).
 
 #### Demo 1: Univariate functions
+###### Examples below illustrate how to calculate the value and derivative of univariate functions at a single value.
 
-**Evaluating `f(x)=3*sin(0.5*x)^2` at `x=5`.**
-
-```python
+```
+#import awesomediff
 import math
 import awesomediff as ad
+```
 
-# Method 1:
+###### Case 1: Evaluate value and derivative of f(x) = 3 * sin(0.5x)^2,  x = pi
+
+```
+# instantiate variable object
 x = ad.variable(val=math.pi)
+
+# define function with x, which is a variable object
 f = 3*ad.sin(0.5*x)**2
-print(f.val)  # 3
-print(f.der)  # 0
 
-# Method 2:
-calc_area = lambda r: math.pi*r**2  # Area of a circle.
+# value of f(x) at x = pi
+print("value at x = pi:", f.val) # 3.0  
+
+# derivative of f(x) at x = pi
+print("derivative at x = pi:", f.der) # 1.837e-16
+```
+
+###### Case 2: Evaluate value and derivative of area = pi * r^2,  r = 10
+
+```
+# area of a circle
+calc_area = lambda r: math.pi*r**2  
+
+# instantiate variable object 
 radius = ad.variable(10)
-area = calc_area(radius)
-print(area.val)  # 314.1592653589793==100*math.pi
-print(area.der)  # 62.83185307179586==20*math.pi
 
-# Method 3:
+# pass in variable object into lambda function
+area = calc_area(radius)
+
+# area when radius = 10
+print("area at radius = 10:", area.val) # 314.159 
+
+# derivative of area (i.e. circumference) when radius = 10
+print("circumference at radius = 10:", area.der) # 62.832
+```
+
+###### Case 3: Evaluate value and derivative of CDF of exponential distribution 1 - e^(-5x), x = 0.5
+
+```
+# define CDF of exponential distribution
 def exp_cdf(x,rate):
-  # CDF of exponential distribution:
-  return 1-ad.exp(-rate*x)
+    return 1-ad.exp(-rate*x)
+
+# instantiate variable object
 x = ad.variable(0.5)
+
 result = exp_cdf(x=x,rate=5)
 cdf = result.val
 pdf = result.der
-print(cdf)  # 0.9179150013761012
-print(pdf)  # 0.410424993119494
+
+# value of CDF function
+print("CDF at x = 0.5", cdf) # 0.918
+
+# value of PDF function (i.e. derivative of CDF)
+print("PDF at x = 0.5", pdf) # 0.410
 ```
+
+
+###### Case 4: Evaluate value and derivative of logistic growth model P(t) = c / (1 + a * e^(-bt)), t = 25
+
+```
+def logistic_growth(t,a,b,c):
+    return c / (1 + a*ad.exp(-b*t))
+
+t = ad.variable(25)
+
+growth_model = logistic_growth(t, a=83.33, b=-0.162, c=500)
+
+population = growth_model.val
+growth_rate = growth_model.der
+
+# population at t = 25
+print("population at t = 25:", population) # 0.105
+
+# population growth rate at t = 25
+print("population growth rate at t = 25:", growth_rate) #-2.185e-05
+```
+
+###### Case 5: Evaluate value and derivative of logistic growth model f(x) = ln(sqrt((1-x)/(x+1))), x = 0.3 
+
+```
+# instantiate variable object
+x = ad.variable(0.3)
+
+# define function
+f = lambda x: ad.log(ad.sqrt((1-x)/(x+1)))
+
+# pass in variable object into function
+result = f(x)
+
+# value of funcation at x = 2
+print("value at x = 2:", result.val) # -0.310
+
+# derivative of function at x = 2 
+print("derivative at x = 2:", result.der) # -1.099
+```
+
+
 
 ### The `function` Class
 
