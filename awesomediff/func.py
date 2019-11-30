@@ -211,7 +211,7 @@ def logb(x, b):
         new_val = np.log(x.val)/np.log(b)
         new_der = (1/(np.log(b)*x.val))*x.der
         return variable(val=new_val,der=new_der)
-    excelt:
+    except:
         new_val = np.log(x)/np.log(b)
         new_der = 0
         return variable(val=new_val,der=new_der)
