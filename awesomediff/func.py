@@ -90,6 +90,90 @@ def tan(x):
     # Return variable with new value an derivative:
     return variable(val=new_val,der=new_der)
 
+def arcsin(x):
+    """
+        Helper function that calculates the arcsine of a variable or number.
+
+        INPUTS:
+            x : awesomediff.variable object or a number.
+
+        OUTPUT:
+            awesomediff.variable
+    """
+    try:
+        # Assume object is a variable:
+        val = x.val
+        der = x.der
+    except:
+        # If not, treat it as a constant.
+        try:
+            float(x)
+        except:
+            raise ValueError("{} is not a number.".format(x))
+        val = x
+        der = 0  # Derivative of a constant is zero.
+    # Calculate new value an derivative:
+    new_val = np.arcsin(val)
+    new_der = 1/np.sqrt(1-val**2)*der
+    # Return variable with new value an derivative:
+    return variable(val=new_val,der=new_der)
+
+def arccos(x):
+    """
+        Helper function that calculates the arccos of a variable or number.
+
+        INPUTS:
+            x : awesomediff.variable object or a number.
+
+        OUTPUT:
+            awesomediff.variable
+    """
+    try:
+        # Assume object is a variable:
+        val = x.val
+        der = x.der
+    except:
+        # If not, treat it as a constant.
+        try:
+            float(x)
+        except:
+            raise ValueError("{} is not a number.".format(x))
+        val = x
+        der = 0  # Derivative of a constant is zero.
+    # Calculate new value an derivative:
+    new_val = np.arccos(val)
+    new_der = -1/np.sqrt(1-val**2)*der
+    # Return variable with new value an derivative:
+    return variable(val=new_val,der=new_der)
+
+def arctan(x):
+    """
+        Helper function that calculates the arctan of a variable or number.
+
+        INPUTS:
+            x : awesomediff.variable object or a number.
+
+        OUTPUT:
+            awesomediff.variable
+    """
+    try:
+        # Assume object is a variable:
+        val = x.val
+        der = x.der
+    except:
+        # If not, treat it as a constant.
+        try:
+            float(x)
+        except:
+            raise ValueError("{} is not a number.".format(x))
+        val = x
+        der = 0  # Derivative of a constant is zero.
+    # Calculate new value an derivative:
+    new_val = np.arctan(val)
+    new_der = 1/(1+val**2)*der
+    # Return variable with new value an derivative:
+    return variable(val=new_val,der=new_der)
+
 def log(x):
     """
         Helper function that calculates the natural log of a variable or number.
@@ -109,6 +193,26 @@ def log(x):
         return variable(val=new_val,der=new_der)
     except:
         new_val = np.log(x)
+        new_der = 0
+        return variable(val=new_val,der=new_der)
+
+def logb(x, b):
+    """
+        Helper function that calculates the log of a variable or number with any base.
+
+        INPUTS:
+            x : AutoDiff.variable object or a number.
+            b: a number
+
+        OUTPUT:
+            AutoDiff.variable
+    """   
+    try:
+        new_val = np.log(x.val)/np.log(b)
+        new_der = (1/(np.log(b)*x.val))*x.der
+        return variable(val=new_val,der=new_der)
+    excelt:
+        new_val = np.log(x)/np.log(b)
         new_der = 0
         return variable(val=new_val,der=new_der)
 
