@@ -150,6 +150,49 @@ class variable:
         """
         return isinstance(other, variable) and self.val == other.val
 
+    def __ne__(self, other):
+        """
+            Overload not equal
+            Check if the thing compared to is a variable and does not have the same vale
+        """
+        return not isinstance(other, variable) or not (self.val == other.val)
+
+    def __lt__(self, other):
+        """
+            Overload less than
+        """
+        try:
+            return self.val<other.val
+        except:
+            raise AttributeError("Can only compare varibles.")
+
+    def __gt__(self, other):
+        """
+            Overload greater than
+        """
+        try:
+            return self.val>other.val
+        except:
+            raise AttributeError("Can only compare varibles.")
+
+    def __le__(self, other):
+        """
+            Overload less than or equal to
+        """
+        try:
+            return self.val<=other.val
+        except:
+            raise AttributeError("Can only compare varibles.")
+
+    def __ge__(self,other):
+        """
+            Overload greater than or equal to
+        """
+        try:
+            return self.val>=other.val
+        except:
+            raise AttributeError("Can only compare varibles.")
+
     def __pow__(self, other):
         try:
             # check whether other is a number
