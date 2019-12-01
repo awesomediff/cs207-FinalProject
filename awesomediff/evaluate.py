@@ -67,10 +67,10 @@ def evaluate(func,vals,seed=None):
                 Functions may include basic operations (+,*,etc), 
                 as well as any special functions supported by awesomediff.
                 
-            vals: A scalar (for univariate function) or list of scalars 
+            vals: A scalar (for univariate function) or a list of lists
                 (for multivariate function) at which to evaluate the function 
-                and its derivative. Its length must be equal to the number of
-                arguments taken by `func`
+                and its derivative. The lengths of the outer list and inner list
+                must be equal to the number of arguments taken by `func`
                 
             seed: A list of seed values for evaluating the derivatives
                 Defaults to a seed of 1 for each variable if no seed value is provided
@@ -103,7 +103,7 @@ def evaluate(func,vals,seed=None):
     num_vars = len(sig.parameters) # num_vars is the total number of variables
     
     ## check user input for vals and convert it to numpy array
-    # user inptut for vals will be a scalar for univariate function and 
+    # user input for vals will be a scalar for univariate function and 
     # a list of scalars for multivariate function
     try:
         float(vals) # if vals is a scalar
@@ -126,24 +126,37 @@ def evaluate(func,vals,seed=None):
         if num_vars == 1: #if univariate function
             seed = np.array([1])
         else: #if multivariate function
-            seed = np.ones(num_vars)
+            seed_matrix = np.identity(num_vars)
+            #seed = np.ones(num_vars)
+            #seed_matrix = _build_seed_matrix(seed)
         
     #if user passes in value for seed argument
     else: 
         try:
-            float(seed) #if seed is a scalar
+            float(seed) # if seed is a scalar
             seed = np.array([seed])
         except:
-            if isinstance(seed, list): # if seed is a list
-                seed = np.array(seed)
+            if isinstance(seed, list): # if seed is a list 
+                # check length of outer list
+                assert len(seed) == num_vars, "length of outer list must equal number of variables"
+                
+                # check length of inner list
+                for s in seed:
+                    assert len(s) == num_vars, "length of inner list must equal number of variables"
+    
+                seed_matrix = np.array(seed)
+                
+            else: # if seed is not provided as a scalar or a list
+                raise ValueError("seed must be provided as a scalar or a list")
+                               
     
     # check length of seed is equal to num_vars
-    if len(seed) != num_vars:
-        raise ValueError("number of seed values passed in does not agree with number of variables")
+    #if len(seed) != num_vars:
+        #raise ValueError("number of seed values passed in does not agree with number of variables")
     
     # if function is multivariate, build seed matrix
-    if len(seed) > 1:
-        seed_matrix = _build_seed_matrix(seed)
+    #if len(seed) > 1:
+        #seed_matrix = _build_seed_matrix(seed)
     
     
     ## evaluate the user-defined function passed in
@@ -181,14 +194,16 @@ def evaluate(func,vals,seed=None):
 
 ## Demo cases of using evaluate function ##
     
-# single-variable function 
-def func1(x):
-    f1 = x**2 - 3
-    return f1
-
-output_vals, jacobian_matrix = evaluate(func=func1, vals=2, seed=1)
-print(output_vals)
-print(jacobian_matrix)
+# =============================================================================
+# # single-variable function 
+# def func1(x):
+#     f1 = x**2 - 3
+#     return f1
+# 
+# output_vals, jacobian_matrix = evaluate(func=func1, vals=2, seed=1)
+# print(output_vals)
+# print(jacobian_matrix)
+# =============================================================================
 
 
 # multi-variable function
@@ -197,34 +212,36 @@ def func2(x,y):
     return f1
 
 
-output_vals, jacobian_matrix = evaluate(func=func2, vals=[2,1])
+output_vals, jacobian_matrix = evaluate(func=func2, vals=[2,1], seed=[[1,0],[0,1,3]])
 print(output_vals)
 print(jacobian_matrix)
 
 
-# vector function of single variable
-def func3(x):
-    f1 = 4*x - 3
-    f2 = x / 4
-    return [f1,f2]
-    
-output_vals, jacobian_matrix = evaluate(func=func3, vals=2)
-print(output_vals)
-print(jacobian_matrix)
-
-
-# vector function of multiple variables
-def func4(x,y,z):
-    f1 = x**2 + 2*y - 7*z
-    f2 = 3*x + z**2
-    f3 = 3*y - 2*z
-    return [f1,f2,f3]
-
-evaluate(func=func4,vals=[2,3,4], seed=[1,2,1])
-
-output_vals, jacobian_matrix = evaluate(func=func4,vals=[2,3,4])
-print(output_vals)
-print(jacobian_matrix)
+# =============================================================================
+# # vector function of single variable
+# def func3(x):
+#     f1 = 4*x - 3
+#     f2 = x / 4
+#     return [f1,f2]
+#     
+# output_vals, jacobian_matrix = evaluate(func=func3, vals=2)
+# print(output_vals)
+# print(jacobian_matrix)
+# 
+# 
+# # vector function of multiple variables
+# def func4(x,y,z):
+#     f1 = x**2 + 2*y - 7*z
+#     f2 = 3*x + z**2
+#     f3 = 3*y - 2*z
+#     return [f1,f2,f3]
+# 
+# evaluate(func=func4,vals=[2,3,4], seed=[1,2,1])
+# 
+# output_vals, jacobian_matrix = evaluate(func=func4,vals=[2,3,4])
+# print(output_vals)
+# print(jacobian_matrix)
+# =============================================================================
     
 
     
