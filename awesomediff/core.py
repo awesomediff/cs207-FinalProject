@@ -255,22 +255,32 @@ def evaluate(func,vals,seed=None):
                 Functions may include basic operations (+,*,etc), 
                 as well as any special functions supported by awesomediff.
                 
-            vals: A scalar (for univariate function) or a list of lists
+            vals: A scalar (for univariate function) or a list of scalars
                 (for multivariate function) at which to evaluate the function 
-                and its derivative. The lengths of the outer list and inner list
-                must be equal to the number of arguments taken by `func`
+                and its derivative. 
                 
-            seed: A list of seed values for evaluating the derivatives
-                Defaults to a seed of 1 for each variable if no seed value is provided
+                
+            seed: A scalar (for univariate function) or a list of lists (for multivariate
+                function) containing seed values for each variable. The lengths of the 
+                outer list and inner list must equal the number of arguments taken by `func`
+                (i.e. the number of variables). Defaults to a seed of 1 for each 
+                variable if no seed value is provided. 
+                
+                EXAMPLE: 
+                To set seed of variables x, y, z at 1, 2, and 3, respectively, user
+                passes the following list of lists as seed:
+                [[1,0,0],[0,2,0],[0,0,3]]
+                The length of outer list and the lengths of each of the inner lists
+                must be equal to the total number of variables (in this example, 3)
         ...
 
         RETURNS:
             output_value: value of function at a specified point. A scalar for 
             a function, a vector of scalars for a vector function
             
-            jacobian: the jacobian of function. A scalar for a univariate function,
-            a vector of scalars for a multivariate function, a matrix of scalars
-            for univariate or multivariate vector functions
+            jacobian: the jacobian of function. A vector of scalar or scalars 
+            for univariate and multivariate functions, respectively. A matrix of
+            scalars for univariate and multivariate vector functions
         ...
 
         EXAMPLE:
@@ -315,8 +325,6 @@ def evaluate(func,vals,seed=None):
             seed = np.array([1])
         else: #if multivariate function
             seed_matrix = np.identity(num_vars)
-            #seed = np.ones(num_vars)
-            #seed_matrix = _build_seed_matrix(seed)
         
     #if user passes in value for seed argument
     else: 
@@ -330,22 +338,17 @@ def evaluate(func,vals,seed=None):
                 
                 # check length of inner list
                 for s in seed:
+                    try: 
+                        len(s)
+                    except: # seed for univariate function given as a list
+                        raise ValueError("seed for univariate function should be given as a scalar")
                     assert len(s) == num_vars, "length of inner list must equal number of variables"
     
                 seed_matrix = np.array(seed)
                 
             else: # if seed is not provided as a scalar or a list
                 raise ValueError("seed must be provided as a scalar or a list")
-                               
-    
-    # check length of seed is equal to num_vars
-    #if len(seed) != num_vars:
-        #raise ValueError("number of seed values passed in does not agree with number of variables")
-    
-    # if function is multivariate, build seed matrix
-    #if len(seed) > 1:
-        #seed_matrix = _build_seed_matrix(seed)
-    
+                                   
     
     ## evaluate the user-defined function passed in
     
@@ -377,67 +380,6 @@ def evaluate(func,vals,seed=None):
         jacobian = outputs.der
         
     return output_value, jacobian
-    
-    
-
-## Demo cases of using evaluate function ##
-    
-# =============================================================================
-# # single-variable function 
-# def func1(x):
-#     f1 = x**2 - 3
-#     return f1
-# 
-# output_vals, jacobian_matrix = evaluate(func=func1, vals=2, seed=1)
-# print(output_vals)
-# print(jacobian_matrix)
-# =============================================================================
-
-
-# =============================================================================
-# # multi-variable function
-# def func2(x,y):
-#     f1 = x**2 - 3*y
-#     return f1
-# 
-# 
-# output_vals, jacobian_matrix = evaluate(func=func2, vals=[2,1], seed=[[1,0],[0,1]])
-# print(output_vals)
-# print(jacobian_matrix)
-# =============================================================================
-
-
-# =============================================================================
-# # vector function of single variable
-# def func3(x):
-#     f1 = 4*x - 3
-#     f2 = x / 4
-#     return [f1,f2]
-#     
-# output_vals, jacobian_matrix = evaluate(func=func3, vals=2)
-# print(output_vals)
-# print(jacobian_matrix)
-# 
-# 
-# # vector function of multiple variables
-# def func4(x,y,z):
-#     f1 = x**2 + 2*y - 7*z
-#     f2 = 3*x + z**2
-#     f3 = 3*y - 2*z
-#     return [f1,f2,f3]
-# 
-# evaluate(func=func4,vals=[2,3,4], seed=[1,2,1])
-# 
-# output_vals, jacobian_matrix = evaluate(func=func4,vals=[2,3,4])
-# print(output_vals)
-# print(jacobian_matrix)
-# =============================================================================
-    
-
-
-    
-    
-    
     
     
     
