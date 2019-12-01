@@ -1,4 +1,5 @@
 from awesomediff.core import variable
+from awesomediff.core import evaluate
 from awesomediff.func import sin
 from awesomediff.func import cos
 from awesomediff.func import tan
