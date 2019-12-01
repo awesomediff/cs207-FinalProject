@@ -394,15 +394,17 @@ def evaluate(func,vals,seed=None):
 # =============================================================================
 
 
-# multi-variable function
-def func2(x,y):
-    f1 = x**2 - 3*y
-    return f1
-
-
-output_vals, jacobian_matrix = evaluate(func=func2, vals=[2,1], seed=[[1,0],[0,1]])
-print(output_vals)
-print(jacobian_matrix)
+# =============================================================================
+# # multi-variable function
+# def func2(x,y):
+#     f1 = x**2 - 3*y
+#     return f1
+# 
+# 
+# output_vals, jacobian_matrix = evaluate(func=func2, vals=[2,1], seed=[[1,0],[0,1]])
+# print(output_vals)
+# print(jacobian_matrix)
+# =============================================================================
 
 
 # =============================================================================
@@ -432,3 +434,10 @@ print(jacobian_matrix)
 # =============================================================================
     
 
+
+    
+    
+    
+    
+    
+    

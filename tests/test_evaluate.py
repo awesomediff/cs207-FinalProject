@@ -12,11 +12,19 @@ import pytest
 import awesomediff as ad
 
 
-def func2(x,y):
-    f1 = x**2 - 3*y
-    return f1
+
+# test univariate single function
+
+def test_univariate_single_func():
+    
+    def func1(x):
+        f1 = (ad.sin(x))**2
+        return f1
+    
+    output_value, jacobian = ad.evaluate(func=func1, vals=np.pi/4)
+    
+    assert np.isclose(output_value, (np.sin(np.pi/4))**2)
+    assert jacobian == 1
 
 
-output_vals, jacobian_matrix = ad.evaluate(func=func2, vals=[2,1], seed=[[1,0],[0,1]])
-print(output_vals)
-print(jacobian_matrix)
+
