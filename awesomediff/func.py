@@ -253,3 +253,46 @@ def exp(x):
         new_val = np.exp(x)
         new_der = 0
         return variable(val=new_val,der=new_der)
+
+
+def sinh(x):
+    """
+        Helper function that calculates hyperbolic sine of a variable or number
+        
+        INPUTS:
+            x : AutoDiff.variable object or a number.
+
+        OUTPUT:
+            AutoDiff.variable
+    """
+    return (exp(x) - exp(-x)) / 2
+
+def cosh(x):
+    """
+        Helper function that calculates hyperbolic cosine of a variable or number
+        
+        INPUTS:
+            x : AutoDiff.variable object or a number.
+
+        OUTPUT:
+            AutoDiff.variable
+    """
+    return (exp(x) + exp(-x)) / 2
+
+
+def tanh(x):
+    """
+        Helper function that calculates hyperbolic tangent of a variable or number
+        
+        INPUTS:
+            x : AutoDiff.variable object or a number.
+
+        OUTPUT:
+            AutoDiff.variable
+    """
+    return sinh(x) / cosh(x)
+    
+
+
+
+

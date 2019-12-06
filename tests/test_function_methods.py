@@ -128,3 +128,70 @@ def test_exp():
     f3 = 5+2*ad.exp(x3)
     assert np.allclose(f3.val, 5+2*np.exp(4))
     assert np.allclose(f3.der, 2*np.exp(4))
+    
+    
+def test_sinh():
+    # sinh of a scalar
+    f1 = ad.sinh(2)
+    assert np.allclose(f1.val, (np.exp(2)-np.exp(-2))/2)
+    
+    # sinh of a variable
+    x2 = ad.variable(4)
+    f2 = ad.sinh(x2)
+    assert np.allclose(f2.val, (np.exp(4)-np.exp(-4))/2)
+    assert np.allclose(f2.der, (np.exp(4)+np.exp(-4))/2)
+    
+    x3 = ad.variable(-1)
+    f3 = ad.sinh(x3)
+    assert np.allclose(f3.val, (np.exp(-1)-np.exp(1))/2)
+    assert np.allclose(f3.der, (np.exp(-1)+np.exp(1))/2)
+    
+    
+def test_cosh():
+    # cosh of a scalar
+    f1 = ad.cosh(0)
+    assert np.allclose(f1.val, (np.exp(0)+np.exp(0))/2)
+    
+    # cosh of a variable
+    x2 = ad.variable(2)
+    f2 = ad.cosh(x2)
+    assert np.allclose(f2.val, (np.exp(2)+np.exp(-2))/2)
+    assert np.allclose(f2.der, (np.exp(2)-np.exp(-2))/2)
+    
+    x3 = ad.variable(10)
+    f3 = ad.cosh(x3)
+    assert np.allclose(f3.val, (np.exp(10)-np.exp(-10))/2)
+    assert np.allclose(f3.der, (np.exp(10)+np.exp(-10))/2)
+    
+
+def test_tanh():
+    th = lambda x: ((np.exp(x)-np.exp(-x))/2) / ((np.exp(x)+np.exp(-x))/2)
+    th_der = lambda x: 1 / ((np.exp(x)+np.exp(-x))/2)**2
+    # tanh of a scalar
+    f1 = ad.tanh(3)
+    assert np.allclose(f1.val, th(3))
+    
+    # tanh of a variable
+    x2 = ad.variable(-2)
+    f2 = ad.tanh(x2)
+    assert np.allclose(f2.val, th(-2))
+    assert np.allclose(f2.der, th_der(-2))
+    
+    x3 = ad.variable(0)
+    f3 = ad.tanh(x3)
+    assert np.allclose(f3.val, th(0))
+    assert np.allclose(f3.der, th_der(0))
+
+
+
+
+
+
+
+
+
+
+    
+
+
+    
