@@ -27,7 +27,7 @@ def gradientDescent(func, initial, rate=0.01, precision=0.00001, iteration = 200
 
 
 # Newton-Raphson Method
-def uni_Newton(func, initial, max_iter=200, epsilon=0.00001):
+def uni_Newton(func, initial, max_iter=200, epsilon=1e-06):
 	'''
 
 	:param func: univariate function
@@ -39,7 +39,7 @@ def uni_Newton(func, initial, max_iter=200, epsilon=0.00001):
 	def root_finding(a):
     	return a**2 + 2*a + 1
     root = uni_Newton(root_finding, 50)
-    root_finding(root) #9.689480066299438e-06
+    root_finding(root) #gives something close to 0
 	'''
 
 	# Check Input formats
