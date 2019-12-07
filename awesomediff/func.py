@@ -115,6 +115,7 @@ def arcsin(x):
     # Calculate new value an derivative:
     new_val = np.arcsin(val)
     new_der = 1/np.sqrt(1-val**2)*der
+    print("new val", new_val)
     # Return variable with new value an derivative:
     return variable(val=new_val,der=new_der)
 
@@ -292,6 +293,27 @@ def tanh(x):
     """
     return sinh(x) / cosh(x)
     
+def logistic(x, L=1, k=1, x0=1):
+    """
+        Helper function that calculates the logistic of a variable or number.
+
+        INPUTS:
+            x : AutoDiff.variable object or a number.
+
+        OUTPUT:
+            AutoDiff.variable
+    """
+    try:
+        val = x.val
+        der = x.der
+        logistic = L/(1+np.exp(-k*(val-x0)))
+        new_val = logistic
+        new_der = logistic*(1-logistic)*der
+        return variable(val=new_val,der=new_der)
+    except:
+        new_val = L/(1+np.exp(-k*(x-x0)))
+        new_der = 0
+        return variable(val=new_val,der=new_der)  
 
 
 

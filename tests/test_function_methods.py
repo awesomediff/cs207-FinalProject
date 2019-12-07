@@ -182,6 +182,74 @@ def test_tanh():
     assert np.allclose(f3.val, th(0))
     assert np.allclose(f3.der, th_der(0))
 
+def test_logistic():
+    L = 1
+    k = 1
+    x0 = 1
+    logistic = lambda x: L/(1 + np.exp(-k*(x-x0)))
+    log_der = lambda x: (1-logistic(x))*logistic(x)
+
+    f1 = ad.logistic(5)
+    assert np.allclose(f1.val, logistic(5))
+
+    x2 = ad.variable(10)
+    f2 = ad.logistic(x2)
+    assert np.allclose(f2.val, logistic(10))
+    assert np.allclose(f2.der, log_der(10))
+
+    x3 = ad.variable(-24)
+    f3 = ad.logistic(x3)
+    assert np.allclose(f3.val, logistic(-24))
+    assert np.allclose(f3.der, log_der(-24))
+
+    L = 2
+    k = 1
+    x0 = 1
+
+    x3 = ad.variable(-24)
+    f3 = ad.logistic(x3)
+    assert np.allclose(f3.val, logistic(-24))
+    assert np.allclose(f3.der, log_der(-24))
+
+def test_arcsin():
+    arcsin = lambda x: np.arcsin(x)
+    arcsin_der = lambda x: 1/np.sqrt(1-x**2)
+
+
+    f1 = ad.arcsin(np.pi/4)
+    assert np.allclose(f1.val, arcsin(np.pi/4))
+
+    x2 = ad.variable(0)
+    f2 = ad.arcsin(x2)
+    assert np.allclose(f2.val, arcsin(0))
+    assert np.allclose(f2.der, arcsin_der(0))
+
+def test_arccos():
+    arccos = lambda x: np.arccos(x)
+    arccos_der = lambda x: -1/np.sqrt(1-x**2)
+
+
+    f1 = ad.arccos(np.pi/4)
+    assert np.allclose(f1.val, arccos(np.pi/4))
+
+    x2 = ad.variable(0)
+    f2 = ad.arccos(x2)
+    assert np.allclose(f2.val, arccos(0))
+    assert np.allclose(f2.der, arccos_der(0))
+
+def test_arctan():
+    arctan = lambda x: np.arctan(x)
+    arctan_der = lambda x: 1/(1+x**2)
+
+
+    f1 = ad.arctan(np.pi/4)
+    assert np.allclose(f1.val, arctan(np.pi/4))
+
+    x2 = ad.variable(0)
+    f2 = ad.arctan(x2)
+    assert np.allclose(f2.val, arctan(0))
+    assert np.allclose(f2.der, arctan_der(0))
+
 
 
 
