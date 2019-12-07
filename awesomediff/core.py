@@ -113,7 +113,6 @@ class variable:
         return self.__add__(-other)
 
     def __rsub__(self,other):
-        print(self,other,-self.__sub__(-other))
         """
             Overload reverse subtraction.
             Implemented using negation and addition.
