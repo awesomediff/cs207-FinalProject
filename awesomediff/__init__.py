@@ -9,4 +9,5 @@ from awesomediff.func import exp
 from awesomediff.func import sinh
 from awesomediff.func import cosh
 from awesomediff.func import tanh
-__all__ = ['variable', 'evaluate', 'sin', 'cos', 'tan','log','sqrt','exp']
+from awesomediff.solvers import uni_Newton
+__all__ = ['variable', 'evaluate', 'sin', 'cos', 'tan','log','sqrt','exp','uni_Newton']
