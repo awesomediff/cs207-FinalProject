@@ -74,7 +74,7 @@ def test_incorrect_input_vals1():
         f1 = (ad.sin(x))**2
         return f1
     
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         # a list of two scalars passed in for 'vals' when expecting only one scalar
         output_value, jacobian = ad.evaluate(func=func1, vals=[np.pi/4,np.pi/2])
         
@@ -85,7 +85,7 @@ def test_incorrect_input_vals2():
         f1 = (3*x**2 - y) / (5*y)
         return f1
     
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         output_value, jacobian = ad.evaluate(func=func3, vals=2)
 
 
@@ -97,9 +97,21 @@ def test_incorrect_input_vals3():
         f3 = 3*y - 2*z
         return [f1,f2,f3]
     
-    with pytest.raises(ValueError):
+    with pytest.raises(RuntimeError):
         output_value, jacobian = ad.evaluate(func=func4,vals=[2,3])
     
+    
+def test_incorrect_input_val4():
+    
+    def func5(x,y):
+        f1 = ad.exp(x)
+        f2 = ad.exp(x) + y**2
+        return [f1,f2]
+        
+    # expecting two arguments, but passed in three values
+    with pytest.raises(RuntimeError):
+        output_value, jacobian = ad.evaluate(func=func5, vals=[1,2,3])
+
 
 # test raising error for incorrect input for 'seed'
 def test_incorrect_input_seed1():
@@ -120,7 +132,7 @@ def test_incorrect_input_seed2():
         return f1
     
     with pytest.raises(AssertionError):
-        # raise error when seed is not given in correct format (expecting a list of two lists)
+        # raise error when seed is not given in correct format (expecting a list of two lists, each of length = 2)
         output_value, jacobian = ad.evaluate(func=func3, vals=[2,2], seed=[[1,0,2],[0,1]])
     
 
