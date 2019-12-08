@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="awesomediff-test", # Replace with your own username
+    name="awesomediff", # Replace with your own username
     version="1.0.0",
     author="Gabriel Pestre, Claire Yang, Erin Yang, Wanxi Yang",
     author_email="claireyang@g.harvard.edu",
