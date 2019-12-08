@@ -6,16 +6,13 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="awesomediff-test", # Replace with your own username
     version="1.0.0",
-    author="Claire",
-    author_email="author@example.com",
+    author="Gabriel Pestre, Claire Yang, Erin Yang, Wanxi Yang",
+    author_email="claireyang@g.harvard.edu",
     description="A package for automatic differentiation",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/awesomediff/cs207-FinalProject",
     packages=setuptools.find_packages(),
-    install_requires=[
-	'numpy',
-    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
