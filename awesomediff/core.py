@@ -1,6 +1,5 @@
 import math
 import numpy as np
-from inspect import signature
 
 class variable:
 
@@ -244,7 +243,6 @@ def evaluate(func,vals,seed=None):
     """
         A wapper function that evaluates a user-defined function
         using awesomediff.variable objects.
-
         INPUTS:
             func: A user-defined function of n variables and m functions
                 that will be evaluated to find the value and derivative 
@@ -272,7 +270,6 @@ def evaluate(func,vals,seed=None):
                 The length of outer list and the lengths of each of the inner lists
                 must be equal to the total number of variables (in this example, 3)
         ...
-
         RETURNS:
             output_value: value of function at a specified point. A scalar for 
             a function, a vector of scalars for a vector function
@@ -281,7 +278,6 @@ def evaluate(func,vals,seed=None):
             for univariate and multivariate functions, respectively. A matrix of
             scalars for univariate and multivariate vector functions
         ...
-
         EXAMPLE:
         >>> def parametric_ellipse(a,b,t):
                 x = a * ad.cos(t)
@@ -292,12 +288,7 @@ def evaluate(func,vals,seed=None):
         np.array([4, 0])    # [a*cos(t), b*sin(t)]
         >>> jacobian
         np.array([[1,0,0],[0,0,4]]) #[[cos(t), 0, -a*sin(t)],[0 , sin(t), a*cos(t)]]
-
     """
-    
-    ## get number of arguments that were passed into func
-    sig = signature(func)
-    num_vars = len(sig.parameters) # num_vars is the total number of variables
     
     ## check user input for vals and convert it to numpy array
     # user input for vals will be a scalar for univariate function and 
@@ -308,11 +299,9 @@ def evaluate(func,vals,seed=None):
     except:
         if isinstance(vals, list): # if vals is a list
             vals = np.array(vals)
-    
-    # check length of vals is equal to num_vars
-    if len(vals) != num_vars:
-        raise ValueError("number of values passed in does not agree with number of variables")
-    
+
+    ## get number of values that were passed as inputs
+    num_vars = len(vals)
     
     ## check user input for seed
     # user input for seed will be a scalar for univariate function and 
@@ -364,7 +353,10 @@ def evaluate(func,vals,seed=None):
     # pass awesomediff.variable objects into user-defined function
     # outputs will be an awesomediff.variable object or a list of 
     # awesomediff.variable objects storing values and derivatives of functions
-    outputs = func(*inputs)
+    try:
+        outputs = func(*inputs)
+    except Exception as e:
+        raise RuntimeError("function evaluation failed with the following error: {}".format(e))
     
     # create output_value and jacobian
     try: # if a vector-function
@@ -379,6 +371,3 @@ def evaluate(func,vals,seed=None):
         jacobian = outputs.der
         
     return output_value, jacobian
-    
-    
-    
