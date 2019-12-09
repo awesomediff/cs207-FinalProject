@@ -239,6 +239,7 @@ class Model:
 
 
 class LinearRegression(Model):
+    """Ordinary least squares regression."""
 
     def __init__(self,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
         """Initialize the model."""
@@ -253,6 +254,9 @@ class LinearRegression(Model):
         self.fit_intercept = fit_intercept
         self.intercept = None
         self.coefs = []
+
+        # Store model parameters to pass to solver:
+        self.model_params = { 'fit_intercept' : self.fit_intercept }
 
     @classmethod
     def _pack_weights(cls,model_params,intercept,coefs):
@@ -327,15 +331,14 @@ class LinearRegression(Model):
             X = standardize(X,check=False,return_stats=False)
 
         # Prepare parameters and initialize weights:
-        model_params = { 'fit_intercept' : self.fit_intercept }
         #initial_weights = [random.uniform(0,1) for _ in range(n_weights)]
         initial_weights = [0 for _ in range(n_weights)]
 
         # Invoke solver (on standardized data):
-        weights = self.solver.solve(model_params,initial_weights,X,y)
+        weights = self.solver.solve(self.model_params,initial_weights,X,y)
 
         # Expose final values to user:
-        intercept,coefs = LinearRegression._unpack_weights(model_params,weights)
+        intercept,coefs = LinearRegression._unpack_weights(self.model_params,weights)
         self.intercept = intercept if self.fit_intercept else None
         self.coefs = coefs
 
@@ -343,7 +346,48 @@ class LinearRegression(Model):
         """Return the score of y and the predictions made with X."""
 
         X,y = _check_inputs(X,y)
-        return r2_score(y,self.predict(X))    
+        return r2_score(y,self.predict(X))
+
+
+class LassoRegression(LinearRegression):
+    """Linear regression model with L1 regularization."""
+
+    def __init__(self,l1_penalty=0.1,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
+        """Initialize LinearRegression model with adjustments for L2 regularization."""
+
+        super().__init__(fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs)
+
+        # Store model parameters to pass to solver:
+        self.l1_penalty = l1_penalty
+        self.model_params = { 'fit_intercept' : self.fit_intercept, 'l1_penalty' : self.l1_penalty }
+
+    @classmethod
+    def _loss(cls,model_params,weights,X,y):
+        """Calculate the loss between y and the predictions made with X using specified parameters and weights."""
+
+        l1_penalty = model_params['l1_penalty']
+        return mean_squared_error( y , cls._predict(model_params,weights,X) ) + l1_penalty * l1_norm(weights)
+
+
+class RidgeRegression(LinearRegression):
+    """Linear regression model with L2 regularization."""
+
+    def __init__(self,l2_penalty=0.1,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
+        """Initialize LinearRegression model with adjustments for L2 regularization."""
+
+        super().__init__(fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs)
+
+        # Store model parameters to pass to solver:
+        self.l2_penalty = l2_penalty
+        self.model_params = { 'fit_intercept' : self.fit_intercept, 'l2_penalty' : self.l2_penalty }
+
+    @classmethod
+    def _loss(cls,model_params,weights,X,y):
+        """Calculate the loss between y and the predictions made with X using specified parameters and weights."""
+
+        l2_penalty = model_params['l2_penalty']
+        return mean_squared_error( y , cls._predict(model_params,weights,X) ) + l2_penalty * l2_norm(weights)
+
 
 
 def gradientDescent(func, initial, rate=0.01, precision=0.00001, iteration = 2000):
