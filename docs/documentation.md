@@ -38,6 +38,7 @@ We can think of this in terms of the calculation graph described above: as the p
 
 For vector of multi-variate functions, 
 ![vector functions](resources/vector_of_func.png?raw=true)
+
 the chain rule states that:
 ![jacobian](resources/jacobian.png?raw=true)
 
