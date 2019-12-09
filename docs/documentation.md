@@ -411,7 +411,9 @@ We would also like to provide an implementation of the Fisher Scoring Algorithm 
 
 #### Newton's Method
 
-In numerical analysis, Newton's method is a root-finding algorithm which which produces successively better approximations to the roots (or zeroes) of a real-valued function. The most basic version starts with a single-variable function f defined for a real variable x, the function's derivative f′, and an initial guess x0 for a root of f. If the function satisfies sufficient assumptions and the initial guess is close, then ![Newton](resources/Newton.png?raw=true). 
+In numerical analysis, Newton's method is a root-finding algorithm which which produces successively better approximations to the roots (or zeroes) of a real-valued function. The most basic version starts with a single-variable function f defined for a real variable x, the function's derivative f′, and an initial guess x0 for a root of f. If the function satisfies sufficient assumptions and the initial guess is close, then 
+
+![Newton](resources/Newton.png?raw=true). 
 
 Our package provides this root-finding algorithm. The user can input a function and a starting point, and optionally specify stopping conditions(max iteration or change in function value), the function is expected to return one of the roots of the function if it has one.  There are two cases where the function cannot find a root. In the first case, the function will return None if we reach the max iteration but the change in function value is less than default/specified epsilon. In the second case, the function also returns None when the function derivative is 0. 
 
