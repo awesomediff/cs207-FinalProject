@@ -225,7 +225,7 @@ def _build_jacobian(outputs):
     outputs = [awesomediff.variable(val=5, der=[4]), awesomediff.variable
     (val=0.5, der=[0.5])]
     
-    >>> _build_jacobian(outputs)
+    ## _build_jacobian(outputs)
     [[4]
      [0.25]]
     
@@ -279,14 +279,16 @@ def evaluate(func,vals,seed=None):
             scalars for univariate and multivariate vector functions
         ...
         EXAMPLE:
-        >>> def parametric_ellipse(a,b,t):
+        ## def parametric_ellipse(a,b,t):
                 x = a * ad.cos(t)
                 y = b * ad.sin(t)
-        >>>     return [x, y]
-        >>> output_value, jacobian = ad.evaluate(func=parametric_ellipse,vals=[4,2,0])
-        >>> output_value
+                return [x, y]
+        ## output_value, jacobian = ad.evaluate(func=parametric_ellipse,vals=[4,2,0])
+        
+        ## output_value
         np.array([4, 0])    # [a*cos(t), b*sin(t)]
-        >>> jacobian
+        
+        ## jacobian
         np.array([[1,0,0],[0,0,4]]) #[[cos(t), 0, -a*sin(t)],[0 , sin(t), a*cos(t)]]
     """
     
