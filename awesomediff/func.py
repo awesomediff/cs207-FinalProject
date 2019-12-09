@@ -114,8 +114,15 @@ def arcsin(x):
         der = 0  # Derivative of a constant is zero.
     # Calculate new value an derivative:
     new_val = np.arcsin(val)
+    if(np.isnan(new_val)):
+        raise ValueError("Please enter a number on the unit circle.")
+
+    # if (np.sqrt(1-val**2)==0):
+    #     new_der = 0
+    # else:
+    #     new_der = 1/np.sqrt(1-val**2)*der
+    # print("new val", new_val)
     new_der = 1/np.sqrt(1-val**2)*der
-    print("new val", new_val)
     # Return variable with new value an derivative:
     return variable(val=new_val,der=new_der)
 
@@ -143,6 +150,15 @@ def arccos(x):
         der = 0  # Derivative of a constant is zero.
     # Calculate new value an derivative:
     new_val = np.arccos(val)
+    # print("new val", new_val)
+    if(np.isnan(new_val)):
+        raise ValueError("Please enter a number on the unit circle.")
+
+    # if (np.sqrt(1-val**2)==0):
+    #     new_der = 0
+    # else:
+    #     new_der = -1/np.sqrt(1-val**2)*der
+
     new_der = -1/np.sqrt(1-val**2)*der
     # Return variable with new value an derivative:
     return variable(val=new_val,der=new_der)
@@ -171,6 +187,8 @@ def arctan(x):
         der = 0  # Derivative of a constant is zero.
     # Calculate new value an derivative:
     new_val = np.arctan(val)
+    if(np.isnan(new_val)):
+        raise ValueError("Please enter a number on the unit circle.")
     new_der = 1/(1+val**2)*der
     # Return variable with new value an derivative:
     return variable(val=new_val,der=new_der)

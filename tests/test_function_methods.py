@@ -237,6 +237,11 @@ def test_arccos():
     assert np.allclose(f2.val, arccos(0))
     assert np.allclose(f2.der, arccos_der(0))
 
+    x3 = ad.variable(np.pi/5)
+    f3 = ad.arccos(x3)
+    assert np.allclose(f3.val, arccos(np.pi/5))
+    assert np.allclose(f3.der, arccos_der(np.pi/5))
+
 def test_arctan():
     arctan = lambda x: np.arctan(x)
     arctan_der = lambda x: 1/(1+x**2)
