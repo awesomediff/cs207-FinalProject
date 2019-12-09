@@ -240,7 +240,7 @@ class Model:
 
 class LinearRegression(Model):
 
-    def __init__(self,fit_intercept=True,solver='gradient_descent',**solver_kwargs):
+    def __init__(self,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
         """Initialize the model."""
 
         valid_solvers = ['gradient_descent']
@@ -249,7 +249,7 @@ class LinearRegression(Model):
         else:
             raise ValueError("Solver must be one of the following: {}".format(", ".join(valid_solvers)))
         
-        self.standardize = False  # Ensure that features have mean zero and standrd deviation one before solving.
+        self.standardize = standardize  # Ensure that features have mean zero and standrd deviation one before solving.
         self.fit_intercept = fit_intercept
         self.intercept = None
         self.coefs = []
@@ -303,12 +303,14 @@ class LinearRegression(Model):
     def predict(self,X):
         """Predict X."""
 
+        X = _check_inputs(X,y=None)
         assert len(X[0])==len(self.coefs), "X does not match dimensions of fitted model."
+        if self.standardize:
+            X = standardize(X,check=False,return_stats=False)
         predictions = []
         for vals in X:
-            pred = self.intercept if self.fit_intercept else 0
-            for x,coef in zip(vals,self.coefs):
-                pred += x*coef
+            pred = sum([x*coef for x,coef in zip(vals,self.coefs)])
+            pred += self.intercept if self.fit_intercept else 0
             predictions.append(pred)
         return predictions
 
@@ -322,7 +324,7 @@ class LinearRegression(Model):
 
         # Standardize data:
         if self.standardize:
-            X,feature_means,feature_stddevs = standardize(X,check=False,return_stats=False)
+            X = standardize(X,check=False,return_stats=False)
 
         # Prepare parameters and initialize weights:
         model_params = { 'fit_intercept' : self.fit_intercept }
