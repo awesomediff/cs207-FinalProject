@@ -1,6 +1,5 @@
 from inspect import signature
 
-import numpy as np
 
 from awesomediff.core import variable
 from awesomediff.core import evaluate
@@ -278,7 +277,7 @@ def uni_Newton(func, initial, max_iter=200, epsilon=1e-06):
 	for i in range(max_iter):
 		func_val, func_der = evaluate(func, current_x)
 
-		if np.abs(func_val) <= epsilon:
+		if abs(func_val) <= epsilon:
 			print('Root Approximation Found!', ' root = ', current_x)
 			return current_x
 
@@ -288,7 +287,7 @@ def uni_Newton(func, initial, max_iter=200, epsilon=1e-06):
 			return None
 
 		# check if it's a bad derivative(0)
-		if np.abs(func_der[0]) <= 10 ** (-15):
+		if abs(func_der[0]) <= 10 ** (-15):
 			print('Bad Starting Point: Derivative of the function = 0 at some point')
 			return None
 			break
