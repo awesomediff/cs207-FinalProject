@@ -409,6 +409,22 @@ We will showcase the power of automatic differentiation by building a [gradient 
 
 We would also like to provide an implementation of the Fisher Scoring Algorithm (discussed [here](https://stats.stackexchange.com/questions/176351/implement-fisher-scoring-for-linear-regression) for example) to approximate the Maximum Likelihood Estimators for linear regression.
 
+#### Newton's Method
+
+In numerical analysis, Newton's method is a root-finding algorithm which which produces successively better approximations to the roots (or zeroes) of a real-valued function. The most basic version starts with a single-variable function f defined for a real variable x, the function's derivative f′, and an initial guess x0 for a root of f. If the function satisfies sufficient assumptions and the initial guess is close, then [IMAGE!]. 
+
+Our package provides this root-finding algorithm. The user can input a function and a starting point, and optionally specify stopping conditions(max iteration or change in function value), the function is expected to return one of the roots of the function if it has one.  There are two cases where the function cannot find a root. In the first case, the function will return None if we reach the max iteration but the change in function value is less than default/specified epsilon. In the second case, the function also returns None when the function derivative is 0. 
+
+Below is an illustration of how to implement Newton's method through uni_Newton function from Awesomediff package. If no root is found, a message explaining what might be the possible cause will be displayed.
+
+```python
+def root_finding(a):
+    return a**2 + 2*a + 1
+    
+root = uni_Newton(root_finding, 50)
+>>> 9.689480066299438e-06
+```
+
 #### Additional Use Cases
 
 We hope that the loss/scoring functions we include in our package may have applications beyond the world of Machine Learning. We plan to build a small demo of an Automatic Market Maker (AMM) that uses a [logarithmic scoring function](https://en.wikipedia.org/wiki/Scoring_rule#Logarithmic_scoring_rule).
