@@ -54,7 +54,7 @@ def test_multivariate_single_func():
         
 
 # test multivariate vector function
-def test_multivariate_vector_func():
+def test_multivariate_vector_func1():
     def func4(x,y,z):
         f1 = x**2 + 2*y - 7*z
         f2 = 3*x + z**2
@@ -65,6 +65,17 @@ def test_multivariate_vector_func():
     
     np.testing.assert_allclose(output_value, np.array([-18,22,1]))
     np.testing.assert_allclose(jacobian, np.array([[4,2,-7],[3,0,8],[0,3,-2]]))
+    
+def test_multivariate_vector_func2():
+    def func5(x,y):
+        f1 = x*y + ad.cos(x)
+        f2 = x*y + ad.sin(y)
+        return [f1,f2]
+ 
+    output_value, jacobian = ad.evaluate(func=func5,vals=[np.pi/3, np.pi/2])
+    
+    np.testing.assert_allclose(output_value, np.array([(np.pi/3)*(np.pi/2)+0.5, (np.pi/3)*(np.pi/2)+1]))
+    np.testing.assert_allclose(jacobian, np.array([[(np.pi/2)-np.sin(np.pi/3), np.pi/3],[np.pi/2, (np.pi/3)+np.cos(np.pi/2)]]))
 
         
 # test raising error for incorrect input for 'vals'
