@@ -199,9 +199,9 @@ print("jacobian at x = 1, y = 1", jacobian) # [[]]
             solvers.py
         tests\
             __init__.py
-            test_function_methods.py
-            test_functions.py
-            test_variable_methods.py
+            test_core.py
+            test_func.py
+            test_solvers.py
         docs\
             resources\
                 Chain_rule.png
@@ -209,32 +209,35 @@ print("jacobian at x = 1, y = 1", jacobian) # [[]]
                 Vector Input Example.png
             milestone1.md
             milestone2.md
+            documentation.md
         univariate_demos.ipynb
         .gitignore
         .travis.yml
         README.md
         setup.cfg
         setup.py
+        LICENSE.txt
         requirements.txt
   ```
   * Modules
     - `core.py`
-      - The main module that defines the `variable` and `function` classes. It determines the properties of deriving a derivate using automatic differentiation.
+      - The main module that defines the `variable` class. The model also contains the `evaluate` function to handle functions directly. It determines the properties of deriving a derivate using automatic differentiation.
     - `func.py`
-      - Contains elementary math functions including `sin`, `cos`, `log`, `exp`. These functions are written on the basis of the `numpy` package.
+      - Contains elementary math functions including trig functions, inverse trig functions, exponentials, hyperbolic functions, logistic function, logarithms, and square root. These functions are written on the basis of the `numpy` package.
     - `solvers.py`
-      - A module for the advanced features, which fill contain solvers to implement machine learning loss functions.
+      - A module for the advanced features, which include solvers to implement machine learning loss functions.
   * Testing
+    - The test files correspond to the files in the module.
     - The tests of the package are located in `tests` directory:
-      - `test_function_methods.py`
-      - `test_functions.py`
-      - `test_variable_methods.py`
+      - `test_core.py`
+      - `test_func.py`
+      - `test_solvers.py`
     - The tests follow the naming conventions of the `pytest` package, and can be executed by running `pytest` from anywhere in the package directory.
     - We also use Travis CI's GitHub integration to run tests automatically when new commits are pushed.
     - Similarly, we use CodeCov to automatically check for code coverage in the GitHub repository. We seek to maintain at least 90% code coverage.
     - The [`README`](../README.md) file presents badges that show the tests performance and code coverage monitored by Travis CI and CodeCov.
   * Distribution
-    - The `awesomediff` package will be available on PyPI.
+    - The `awesomediff` package is available on PyPI.
     - The installation code can be found in the ["How to use `awesomediff`"](#how-to-use-awesomediff) section.
   * Dependency
     - `awesomediff` is dependent on the `numpy` package for elementary math functions. We also use `pytest` for testing.
