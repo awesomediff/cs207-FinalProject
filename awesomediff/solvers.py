@@ -16,6 +16,17 @@ from awesomediff.func import cosh
 from awesomediff.func import tanh
 
 
+def mean_squared_error(y_true,y_pred):
+
+    assert len(y_true)==len(y_pred)
+
+    loss = 0
+    for true,pred in zip(y_true,y_pred):
+        loss += (true-pred)**2
+    loss = loss / len(y_true)
+    return loss
+
+
 def _check_inputs(X,y):
     """Converts a matrix X into a list of lists and a vector y into a list."""
 
@@ -37,17 +48,6 @@ def _check_inputs(X,y):
         new_X.append( new_row )
 
     return new_X,new_y
-
-
-def mean_squared_error(y_true,y_pred):
-
-    assert len(y_true)==len(y_pred)
-
-    loss = 0
-    for true,pred in zip(y_true,y_pred):
-        loss += (true-pred)**2
-    loss = loss / len(y_true)
-    return loss
 
 
 class Solver:
