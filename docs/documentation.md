@@ -95,16 +95,31 @@ import awesomediff as ad
 
 Below are some example scenarios to demonstrate how the module works:
 
-#### I. Univariate function
 
-```
-#import awesomediff
+```python
 import math
 import awesomediff as ad
 ```
 
 ###### Case 1: Evaluate value and derivative of area = pi * r^2,  r = 10
 
+```python
+def calc_area(r):
+  area = math.pi*r**2
+  return area
+
+area_circle, circumference = ad.evaluate(func=calc_area, vals=10)
+
+# area when radius = 10
+print("area at radius = 10:", area_circle)
+>>> 314.159 
+
+# derivative of area (i.e. circumference) when radius = 10
+print("circumference at radius = 10:", circumference) 
+>>> 62.832
+```
+
+In the case of a single univariate function, user can also directly instantiate `variable` object to calculate the output value and derivative
 ```python
 # area of a circle
 calc_area = lambda r: math.pi*r**2  
@@ -116,83 +131,52 @@ radius = ad.variable(10)
 area = calc_area(radius)
 
 # area when radius = 10
-print("area at radius = 10:", area.val) # 314.159 
+print("area at radius = 10:", area.val)  
+>>> 314.159 
 
 # derivative of area (i.e. circumference) when radius = 10
-print("circumference at radius = 10:", area.der) # 62.832
+print("circumference at radius = 10:", area.der)
+>>> 62.832
 ```
 
-###### Case 2: Evaluate value and derivative of CDF of exponential distribution 1 - e^(-5x), x = 0.5
+###### Case 2: Evaluate value and partial derivatives of 1 - e^(-rx), x = 0.5, r = 5
 
 ```python
 # define CDF of exponential distribution
-def exp_cdf(x,rate):
-    return 1-ad.exp(-rate*x)
+def function(x,r):
+    func1 = 1-ad.exp(-r*x)
+    return func1
 
-# instantiate variable object
-x = ad.variable(0.5)
 
-result = exp_cdf(x=x,rate=5)
-cdf = result.val
-pdf = result.der
+output_value, partial_ders = ad.evaluate(func=function, vals=[0.5, 5])
 
 # value of CDF function
-print("CDF at x = 0.5", cdf) # 0.918
+print("output value at x = 0.5, r = 5", output_value) 
+>>> 0.9179
 
 # value of PDF function (i.e. derivative of CDF)
-print("PDF at x = 0.5", pdf) # 0.410
+print("partial derivatives at x = 0.5, r = 5", partial_ders)
+>>> [0.4104, 0.0410]
 ```
 
-###### Case 3: Evaluate value and derivative of logistic growth model P(t) = c / (1 + a * e^(-bt)), t = 25
+###### Case 3: Evaluate value and jacobian of f = [[xy + cos(x)], [x + y + cos(y)]]
 
 ```python
-def logistic_growth(t,a,b,c):
-    return c / (1 + a*ad.exp(-b*t))
+def function(x,y):
+    func1 = x * y + ad.cos(x)
+    func2 = x + y + ad.cos(y)
+    return [func1, func2]
 
-t = ad.variable(25)
+output_value, jacobian = ad.evaluate(func=function, vals=[1, 1])
 
-growth_model = logistic_growth(t, a=83.33, b=-0.162, c=500)
+print("output value at x = 1, y = 1", output_value)
+>>> [1.5403, 2.5403]
 
-population = growth_model.val
-growth_rate = growth_model.der
-
-# population at t = 25
-print("population at t = 25:", population) # 0.105
-
-# population growth rate at t = 25
-print("population growth rate at t = 25:", growth_rate) #-2.185e-05
+print("jacobian at x = 1, y = 1", jacobian) # [[]]
+>>> [[0.1585, 1],
+     [1, 0.1585]]
 ```
 
-###### Case 4: Evaluate value and derivative of logistic growth model f(x) = ln(sqrt((1-x)/(x+1))), x = 0.3 
-
-```python
-# instantiate variable object
-x = ad.variable(0.3)
-
-# define function
-f = lambda x: ad.log(ad.sqrt((1-x)/(x+1)))
-
-# pass in variable object into function
-result = f(x)
-
-# value of funcation at x = 2
-print("value at x = 2:", result.val) # -0.310
-
-# derivative of function at x = 2 
-print("derivative at x = 2:", result.der) # -1.099
-```
-
-#### II. Multivariate function
-
-The `awesomediff.variable` can take in vectors as inputs:
-```python
-func = lambda x,y: 2*x + y^2
-f = ad.function(func=func, vals=[5,4], seed=[[1,0],[0,1]], labels=['x','y'] )
-print(f.val)  # 26
-print(f.der)  # [2,8]
-print(f.der['x'])  # 2
-print(f.der['y'])  # 8
-```
 
 
 ## Software Organization
@@ -263,11 +247,10 @@ import awesomediff as ad
 
 The core data structure of the `awesomediff` package is the `variable` object, which represents the value and derivative of a function and defines how it should behave when [elementary operations](#Elementary-Operations) are performed on it (perhaps in conjunction with another function).
 
-We also provide a `function` class, which provides a wrapper for performing functions of multiple variables and with multiple input values. We expect users to interact mainly with the `function` class, although they may implement simple functions directly with the `variable` class.
+We also provide `evaluate` function, stored in the `core` module. The `evaluate` function allows users to compute the values and the jacobian of univariate and multivariate functions as well as a vector of univariate and multivariate functions. We expect users to call the `evaluate` function rather than directly instantiating `variable` objects to compute the values and derivatives of functions (although they are not precluded from doing so). 
 
 The `awesomediff` package also provides tools for data scientists to apply AD to Machine Learning tasks. The `solvers` module contains loss functions and solving routines to implement optimization tasks such as gradient descent.
 
-_(**Note:** As of November 2019, multivariate functionality and machine learning applications have not yet been implemented. Please see the [Roadmap](#Roadmap-for-Future-Development) section below for more details on how we plan to implement these features.)_
 
 ### The `variable` Class
 
@@ -300,31 +283,49 @@ print("derivative at x = pi:", f.der) # 1.837e-16
 ```
 
 
-### The `function` Class
+### The `evaluate` function
 
-_(**Note:** The `function` class is not yet implemented. It will be added as part of the multivariate functionality described in the [Roadmap](#Roadmap-for-Future-Development) section below.)_
+The `evaluate` function takes as inputs 1) `func`: a user-defined function that involves any elementary operations supported by `awesomediff`, and 2) `vals`: a value at which to evaluate the function (a list of values if the function is multivariate). `evaluate` returns the output value and the jacobian of the function evaluated at the specified value as arrays.  
 
-The `function` class takes as inputs a function (defined which uses any elementary operations supported by `awesomediff`), a list of values (possibly vectors) at which to evaluate the function, and a matrix representing the seed of the derivative. It then evaluates the function and derivative using the specified values and seed, and provides methods for the user to access the results. Optionally, users can provide a list of labels (such as 'x' and 'y') that can be used to access values and partial derivatives for a specific variable.
+`evaluate` also takes an optional argument `seed` if the user wishes to set the seeds of variables to a value other than 1. Otherwise, `evaluate` uses a default value of 1 for seed. For further details on how to provide an input for `seed`, see ["Input for Seed"](#Input-for-Seed).  
 
-The `function` class takes as arguments a user-defined function of `n` inputs and `m` outputs, a list of `n` values (each corresponding to the initial value of one of the input variables) and an `n`-by-`n` seed for the derivative.
 
-By default, the seed is is set to an identity matrix, which will produce the partial derivative with respect to each of the variables.
+The example below steps through how a user would call `evaluate` to compute the output values and the jacobian of a multivariate vector function at a specified set of values. 
 
-The `function` class verifies that the inputs have coherent dimensions, then wraps each value in a `variable`, evaluates the function on those variables, and stores the values and derivatives for the user to access.
-
-#### Example: Multivariate functions (future)
-
-To calculate the derivative of f(x,y) at x=5 and y=4, the user can instantiate `variable` objects directly or use a `function` object.
-
+In the case of vector functions, the user-defined function should return the component functions as a list. For example, for a vector function composed of f1 and f2, the function should return f1 and f2 in a single list. 
 ```python
-x = ad.variable(val=5, seed=[1,0])
-y = ad.variable(val=4, seed=[0,1])
-f = 2*x + y^2
-print(f.val)  # 26
-print(f.der)  # [2,8]
+def function(x,y):
+  f1 = ad.sin(x) + 2*y
+  f2 = 2*x + ad.cos(y)
+  return [f1,f2]
 ```
 
-_(Note: The current implementation exposes the derivative and variable to the user as properties. In future implementations, we plan to update the interface so that users can also access derivatives with a function that allows them to specify which variable's derivative to return. The example above assumes for simplicity that the user provides labels for each variable which are uses as the keys of a dictionary that stores the derivatives.)_
+Once the user defines a function at which to evaluate the output value and the jacobian, the user calls `evaluate` in the following manner. To evaluate the ouput value and the jacobian of the multivariate vector function (as defined above) at x = 0 and y = 1, 
+```python
+output_value, jacobian = ad.evaluate(func=function, vals=[0, 1])
+```
+`evaluate` assumes that the order in which the values are provided in the list passed to `vals` corresponds to the order in which the variables were declared in the user-defined function. Here it is assumed that the user wishes to evaluate the multivariate vector function at x = 0 and y = 1. `evaluate` verifies that the number of values (i.e. the length of the list passed to `vals`) agrees with the number of variables in the function. 
+
+`evaluate` returns the following:
+```python
+output_value
+>>> [2, 0.5403]
+jacobian
+>>> [[1, 2],
+     [2, -0.8415]]
+```
+The first row of the jacobian contains the partial derivatives of f1 with respect to x and with respect to y in the first and second columns, respectively. The second row of the jacobian contains the partial derivatives of f2 with respect to x and with respect to y in the first and second columns, respectively. In general, the jacobian has a dimension of m x n where m = number of component functions in a vector function and n = number of variables. In this example, the jacobian has the dimension 2 x 2 since the vector function consists of two component functions, f1 and f2 of two variables. 
+
+For a single univariate function, the jacobian is a scalar (a numpy array of a single value), and for a single multivariate function, the jacobian is a numpy row vector. For a univariate vector function, the jacobian is a numpy column vector, and for a multivariate vector function, the jacobian is a 2-dimensional numpy array. 
+
+
+#### Input for Seed
+If the user does not pass in an input for the `seed` argument, it is assumed that the seed for each variable is 1. For example, for a function of two variables x and y, it is assumed that the seed for x = [1, 0] and the seed for y = [0, 1]. If the user instead wishes to specify the seed of x to be 2 and the seed of y to be 3, the user will input the seed as [[2, 0], [0, 3]], a list of lists:
+
+```python
+output_value, jacobian = ad.evaluate(func=function, vals=[0, 1], seed=[[2, 0], [0, 3]])
+```
+
 
 ### Elementary Operations
 
@@ -339,6 +340,14 @@ The `variable` class overloads the following binary operations (and their respec
 - `__mul__`
 - `__truediv__`
 - `__pow__`
+
+The `variable` class overloads the following comparison operators:
+- `__eq__`
+- `__ne__`
+- `__lt__`
+- `__gt__`
+- `__le__`
+- `__ge__`
 
 Each binary operator acts on the `variable` instance and can accept a scalar or a another `variable` instance as its other argument. For example, addition is overloaded in the following way:
 
@@ -361,12 +370,13 @@ def __add__(x, y):
 
 The `func` module contains functions defining each of the following elementary functions (as well as their corresponding reverse operations):
 
-- `sqrt`
-- `exp`
-- `ln`
-- `log` (logarithm of any chosen base)
 - `sin`, `cos`, `tan`
-- `arcsin`, `arccos`, `arctan` (not implemented yet)
+- `arcsin`, `arccos`, `arctan` 
+- `exp`
+- `sinh`, `cosh`, `tanh`
+- `sqrt`
+- `logistic`
+
 
 The `func` module relies on the `numpy` package to evaluate the above elementary functions. The methods in the `func` module define how to perform elementary operations on scalars as well as `variable` objects. 
 
@@ -387,17 +397,6 @@ def sin(x):
   return result
 ```
 
-## Roadmap for Future Development
-
-### Multivariate and Vectorized Implementations
-
-We are working on these features in a [development branch](https://github.com/awesomediff/cs207-FinalProject/blob/docs/docs/milestone2.md) and hope to roll them out soon.
-
-Our multivariate implementation will store the derivatives in `numpy` arrays. This will allow us to store the derivative with respect to multiple seeds. We will make use of vectorized arithmetic with `numpy` to enable quick calculations. Most of our existing operators will easily work with vectors instead of scalars. 
-
-For binary operations, we will verify that the derivatives of each `variable` have the same dimensions. If that is not the case, we will return an error. We will also provide a `function` class that acts as a wrapper to build and manage `variable` instances with the appropriate dimensions for the input values and seed the user provides.
-
-We discuss the functionality of this `function` class and sketch out a demo of how the user will interact with it in the[`function` Class section (above)](#The-function-Class).
 
 ### Future Features
 
