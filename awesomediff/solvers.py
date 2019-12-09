@@ -17,10 +17,23 @@ from awesomediff.func import tanh
 
 
 def l1_norm(vals):
-    return sum([abs(v) for v in vals])
+    if len(vals)==0:
+        return []
+    try:
+        # If inputs are awesomediff.variable objects:
+        return sum([abs(v.val) for v in vals])
+    except:
+        return sum([abs(v) for v in vals])
 
 def l2_norm(vals):
-    return sqrt(sum([v**2 for v in vals])).val
+    if len(vals)==0:
+        return []
+    try:
+        # If inputs are awesomediff.variable objects:
+        vals[0].val
+        return sqrt(sum([v**2 for v in vals]))
+    except:
+        return sqrt(sum([v**2 for v in vals])).val
 
 def mean(vals):
     return sum([v for v in vals])/len(vals)
@@ -70,22 +83,27 @@ def transpose(M,check=True):
     return new_M
 
 
-def standardize(M,check=True,return_stats=False):
+def standardize(M,feature_means=None,feature_stdevs=None,check=True,return_stats=False):
     """
         Transform a matrix (list of lists) so that each column has mean 0 and standard deviation 1.
         If `return_stats==True`, returns a tuple: transposed_matrix, list_of_means, list_of_standard_deviations.
         If `check==True`, ensures that the input is a list of lists.
+        If `feature_means` and `feature_stdevs` are not specified, they are calculated from the data.
     """
 
     if check:
         M = _check_inputs(M)
+        if feature_means is not None:
+            assert len(feature_means) == len(M[0])
+        if feature_stdevs is not None:
+            assert len(feature_stdevs) == len(M[0])
     M_ = []
     Mt = transpose(M,check=False)
     mus = []
     sigmas = []
-    for row in Mt:
-        mu = mean(row)
-        sigma = sqrt(variance(row)).val
+    for r,row in enumerate(Mt):
+        mu = mean(row) if feature_means is None else feature_means[r]
+        sigma = sqrt(variance(row)).val if feature_stdevs is None else feature_means[r]
         M_.append( [(v-mu)/sigma for v in row] )
         mus.append(mu)
         sigmas.append(sigma)
@@ -172,6 +190,11 @@ class GradientDescent(Solver):
                 print("Step {}: loss={}; grad={}".format(iteration,loss,grad))
                 #print("Step {}: loss={}".format(iteration,loss))
             # Check for stopping conditions:
+            if loss == float('Inf'):
+                converged = False
+                if self.verbose:
+                    print("Stop : loss=Inf")
+                break
             if iteration >= self.max_iter:
                 converged = True
                 if self.verbose:
@@ -310,7 +333,9 @@ class LinearRegression(Model):
         X = _check_inputs(X,y=None)
         assert len(X[0])==len(self.coefs), "X does not match dimensions of fitted model."
         if self.standardize:
-            X = standardize(X,check=False,return_stats=False)
+            feature_means = self.feature_means
+            feature_stdevs = self.feature_stdevs
+            X = standardize(X,feature_means=feature_means,feature_stdevs=feature_stdevs,check=False,return_stats=False)
         predictions = []
         for vals in X:
             pred = sum([x*coef for x,coef in zip(vals,self.coefs)])
@@ -328,7 +353,9 @@ class LinearRegression(Model):
 
         # Standardize data:
         if self.standardize:
-            X = standardize(X,check=False,return_stats=False)
+            X,feature_means,feature_stdevs = standardize(X,check=False,return_stats=True)
+            self.feature_means = feature_means
+            self.feature_stdevs = feature_stdevs
 
         # Prepare parameters and initialize weights:
         #initial_weights = [random.uniform(0,1) for _ in range(n_weights)]
