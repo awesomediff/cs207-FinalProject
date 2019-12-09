@@ -112,12 +112,12 @@ def calc_area(r):
 area_circle, circumference = ad.evaluate(func=calc_area, vals=10)
 
 # area when radius = 10
-print("area at radius = 10:", area_circle)
->>> 314.159 
+>>> print("area at radius = 10:", area_circle)
+314.159 
 
 # derivative of area (i.e. circumference) when radius = 10
-print("circumference at radius = 10:", circumference) 
->>> 62.832
+>>> print("circumference at radius = 10:", circumference) 
+62.832
 ```
 
 In the case of a single univariate function, user can also directly instantiate `variable` object to calculate the output value and derivative
@@ -132,37 +132,37 @@ radius = ad.variable(10)
 area = calc_area(radius)
 
 # area when radius = 10
-print("area at radius = 10:", area.val)  
->>> 314.159 
+>>> print("area at radius = 10:", area.val)  
+314.159 
 
 # derivative of area (i.e. circumference) when radius = 10
-print("circumference at radius = 10:", area.der)
->>> 62.832
+>>> print("circumference at radius = 10:", area.der)
+62.832
 ```
 
 ###### Case 2: Evaluate value and partial derivatives of 1 - e^(-rx), x = 0.5, r = 5
 
 ```python
-# define CDF of exponential distribution
+# define function 
 def function(x,r):
     func1 = 1-ad.exp(-r*x)
     return func1
 
-
 output_value, partial_ders = ad.evaluate(func=function, vals=[0.5, 5])
 
-# value of CDF function
-print("output value at x = 0.5, r = 5", output_value) 
->>> 0.9179
+# value of function
+>>> print("output value at x = 0.5, r = 5", output_value) 
+0.9179
 
-# value of PDF function (i.e. derivative of CDF)
-print("partial derivatives at x = 0.5, r = 5", partial_ders)
->>> [0.4104, 0.0410]
+# derivative of function
+>>> print("partial derivatives at x = 0.5, r = 5", partial_ders)
+[0.4104, 0.0410] # [e^(-rx)r, e^(-rx)x]
 ```
 
 ###### Case 3: Evaluate value and jacobian of f = [[xy + cos(x)], [x + y + cos(y)]]
 
 ```python
+# define vector function
 def function(x,y):
     func1 = x * y + ad.cos(x)
     func2 = x + y + ad.cos(y)
@@ -170,12 +170,12 @@ def function(x,y):
 
 output_value, jacobian = ad.evaluate(func=function, vals=[1, 1])
 
-print("output value at x = 1, y = 1", output_value)
->>> [1.5403, 2.5403]
+>>> print("output value at x = 1, y = 1", output_value) 
+[1.5403, 2.5403]  # [value of func1, value of func2]
 
-print("jacobian at x = 1, y = 1", jacobian) # [[]]
->>> [[0.1585, 1],
-     [1, 0.1585]]
+>>> print("jacobian at x = 1, y = 1", jacobian) 
+[[0.1585, 1],
+[1, 0.1585]]  # [[y-sin(x), x], [1, -sin(y)+1]]
 ```
 
 
@@ -288,7 +288,7 @@ print("derivative at x = pi:", f.der) # 1.837e-16
 
 The `evaluate` function takes as inputs 1) `func`: a user-defined function that involves any elementary operations supported by `awesomediff`, and 2) `vals`: a value at which to evaluate the function (a list of values if the function is multivariate). `evaluate` returns the output value and the jacobian of the function evaluated at the specified value as arrays.  
 
-`evaluate` also takes an optional argument `seed` if the user wishes to set the seeds of variables to a value other than 1. Otherwise, `evaluate` uses a default value of 1 for seed. For further details on how to provide an input for `seed`, see ["Input for Seed"](#Input-for-Seed).  
+`evaluate` also takes an optional argument `seed` if the user wishes to set the seeds of variables to a value other than 1. Otherwise, `evaluate` uses a default value of 1 for seed. For further details on how to provide an input for `seed`, see [Input for Seed](#Input-for-Seed).  
 
 
 The example below steps through how a user would call `evaluate` to compute the output values and the jacobian of a multivariate vector function at a specified set of values. 
@@ -326,6 +326,7 @@ If the user does not pass in an input for the `seed` argument, it is assumed tha
 ```python
 output_value, jacobian = ad.evaluate(func=function, vals=[0, 1], seed=[[2, 0], [0, 3]])
 ```
+In general, the length of the outer list and the lengths of each of the inner lists are expected to be equal to the number of variables in the function for which the user wishes to evaluate the value and the jacobian.
 
 
 ### Elementary Operations
