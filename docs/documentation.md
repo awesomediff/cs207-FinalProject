@@ -56,22 +56,21 @@ Automatic differentiation, on the other hand, escapes the limitations posed by s
 
 ### Installation
 
-* The package will be available on PyPI.
+* The package is available on PyPI.
     - You can either install the package in your local environment or in a virtual environment.
+* Make sure you have numpy in your environment. If not, install using pip:
+```
+pip install numpy
+```
 * If you have a Python3 environment with `numpy` installed ready to go, the `awesomediff` package can be installed using the following code:
 ```
 pip install awesomediff
 ```
-* Right now, the package is not available on PyPI yet, so install using methods below:
+  
+* For developers, you can install the package by getting our Github repository following these steps:
 * Clone the project's git repository to your machine:
 ```
 git clone https://github.com/awesomediff/cs207-FinalProject.git
-```
-* If you want to install the package in a virtual environment, set up the virtual environment in the cloned directory using:
-```
-pip3 install virtualenv
-virtualenv -p python3 venv
-source venv/bin/activate
 ```
 Then install the dependencies:
 ```
@@ -81,6 +80,14 @@ If you want to run the testing with `pytest`, run the following from the root:
 ```
 pytest tests/
 ```
+
+* If you want to install the package in a virtual environment, set up the virtual environment in the cloned directory using:
+```
+pip install virtualenv
+virtualenv -p python3 venv
+source venv/bin/activate
+```
+Inside the virtual environment, you can either install the package using pip or clone the Github repository with the same steps as above.
 
 ### Usage
 
