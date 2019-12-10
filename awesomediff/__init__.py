@@ -10,6 +10,7 @@ from awesomediff.func import sinh
 from awesomediff.func import cosh
 from awesomediff.func import tanh
 from awesomediff.func import log
+from awesomediff.func import logb
 from awesomediff.func import sqrt
 from awesomediff.func import exp
 from awesomediff.func import logistic
@@ -43,6 +44,7 @@ __all__ = [
     'cosh',
     'tanh',
     'log',
+    'logb',
     'sqrt',
     'exp',
     'logistic',

@@ -198,9 +198,9 @@ class GradientDescent(Solver):
         prev_loss = None
         prev_weights = initial_weights
 
-        converged = False
+        self.converged = False
         iteration = 0
-        while not converged:
+        while not self.converged:
             iteration += 1
             loss,grad = evaluate(loss_func,prev_weights)
             weights = [w - alpha * gr for w,gr in zip(prev_weights,grad)]
@@ -209,29 +209,29 @@ class GradientDescent(Solver):
                 #print("Step {}: loss={}".format(iteration,loss))
             # Check for stopping conditions:
             if loss == float('Inf'):
-                converged = False
+                self.converged = False
                 if self.verbose:
                     print("Stop : loss=Inf")
                 break
             if iteration >= self.max_iter:
-                converged = True
+                self.converged = False
                 if self.verbose:
                     print("Stop : iteration={}".format(iteration))
                 break
             if (prev_loss is not None) and (abs(loss-prev_loss) < self.abs_tol):
-                converged = True
+                self.converged = True
                 if self.verbose:
                     print("Stop : abs_tol={}".format(abs(loss-prev_loss)))
                 break
             if (prev_loss is not None) and (abs((loss-prev_loss)/prev_loss) < self.rel_tol):
-                converged = True
+                self.converged = True
                 if self.verbose:
                     print("Stop : rel_tol={}".format(abs((loss-prev_loss)/prev_loss)))
                 break
             prev_loss = loss
             prev_weights = weights
         
-        if not converged:
+        if not self.converged:
             print("Warning: Gradient descent did not converge.")
             
         return weights

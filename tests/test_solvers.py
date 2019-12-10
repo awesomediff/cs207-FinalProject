@@ -45,8 +45,7 @@ def test_helpers():
     y2 = [1,2,3]
     with pytest.raises(AssertionError):
         X,y = ad.solvers._check_inputs(X,y2)
-
-    
+        
     # Transpose:
     M = [[1,2,3],[4,5,6]]
     Mt = ad.transpose(M,check=True)
@@ -119,6 +118,12 @@ def test_superclasses():
     with pytest.raises(NotImplementedError):
         solver.solve(model_params,initial_weights,X,y)
 
+    model_params = { 'fit_intercept' : True }
+    weights = ad.LinearRegression._pack_weights(model_params,1,[2,3,4,5])
+    intercept,coefs = ad.LinearRegression._unpack_weights(model_params,weights)
+    assert intercept==1
+    assert coefs==[2,3,4,5]
+
 def test_linear_regression():
 
     # Test with and without intercept; with and without standardization.
@@ -183,3 +188,24 @@ def test_ridge_regression():
     reg = ad.RidgeRegression(fit_intercept=True,standardize=True,max_iter=2000,learning_rate=0.05,l2_penalty=1.0,verbose=True)
     reg.fit(X,y)
     assert reg.score(X,y)>0.99
+
+def test_stop():
+
+    X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+    y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+    # Max iterations:
+    reg = ad.LinearRegression(max_iter=1,verbose=True)
+    reg.fit(X,y)
+    assert reg.solver.converged == False
+
+    # Infinite loss:
+    reg = ad.RidgeRegression(max_iter=1000,learning_rate=0.1,verbose=True)
+    reg.fit(X,y)
+    assert reg.solver.converged == False
+
+    # Infinite loss:
+    reg = ad.LinearRegression(abs_tol=100,learning_rate=0.01,verbose=True)
+    reg.fit(X,y)
+    assert reg.solver.converged == True
+

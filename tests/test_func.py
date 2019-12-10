@@ -97,6 +97,25 @@ def test_log():
     assert np.allclose(f4.val, np.log(3)*5+1)
     assert np.allclose(f4.der, 5/3)
 
+def test_logb():
+    # log of a scalar
+    f1 = ad.logb(1,np.exp(1))
+    assert np.allclose(f1.val, 0)
+
+    f2 = ad.logb(10,np.exp(1))
+    assert np.allclose(f2.val, np.log(10))
+
+    # log of a variable
+    x3 = ad.variable(1)
+    f3 = ad.logb(x3,np.exp(1))
+    assert np.allclose(f3.val, 0)
+    assert np.allclose(f3.der, 1)
+
+    x4 = ad.variable(3)
+    f4 = ad.logb(x4,np.exp(1))*5+1
+    assert np.allclose(f4.val, np.log(3)*5+1)
+    assert np.allclose(f4.der, 5/3)
+
 def test_sqrt():
     # square root of a scalar
     f1 = ad.sqrt(81)
@@ -255,16 +274,25 @@ def test_arctan():
     assert np.allclose(f2.val, arctan(0))
     assert np.allclose(f2.der, arctan_der(0))
 
+def test_errors():
 
+    x = "invalid input"  # Not a number of ad.variable.
+    for f in [
+        ad.sin,
+        ad.cos,
+        ad.tan,
+        ad.arcsin,
+        ad.arccos,
+        ad.arctan,
+    ]:
+        with pytest.raises(ValueError):
+            f(x)
 
-
-
-
-
-
-
-
-    
-
-
-    
+    x = 999  # Not in unit circle.
+    for f in [
+        ad.arcsin,
+        ad.arccos,
+        #ad.arctan,
+    ]:
+        with pytest.raises(ValueError):
+            f(999)
