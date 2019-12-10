@@ -148,7 +148,7 @@ class Solver:
 
     def __init__(self,model,**solver_params):
         self.model = model
-        raise NotImplementedError
+        pass
 
     def solve(self,model_params,initial_weights,X,y):
         raise NotImplementedError
