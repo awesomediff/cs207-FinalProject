@@ -57,15 +57,12 @@ Automatic differentiation, on the other hand, escapes the limitations posed by s
 
 * The package is available on PyPI.
     - You can either install the package in your local environment or in a virtual environment.
-* Make sure you have numpy in your environment. If not, install using pip:
-```
-pip install numpy
-```
-* If you have a Python3 environment with `numpy` installed ready to go, the `awesomediff` package can be installed using the following code:
+
+`awesomediff` package can be installed using the following code:
 ```
 pip install awesomediff
 ```
-  
+
 * For developers, you can install the package by getting our Github repository following these steps:
 * Clone the project's git repository to your machine:
 ```
@@ -94,14 +91,11 @@ Inside the virtual environment, you can either install the package using pip or 
 ```python
 import awesomediff as ad
 ```
-- Generally, the user should initialize an auto differentiation object (known as a `variable` object in the package) first, for each variable needed in the function, using the module.
-- The user can form functions using the objects initialized to create more complex objects with elementary math operations and functions.
+- To compute the value and derivative/jacobian of a function at a specified set of values, the user will first define a function using elementary operations supported by `awesomediff` and pass it to the `evaluate` function along with a list of values of variables at which to evaluate. 
+- While it is advised that the user call `evaluate` to compute the value and derivative/jacobian of a function, the user may also directly instantiate an auto differentiation object (known as a `variable` object in the package) and access the value and derivative via the variable object's `val` and `der` attributes, respectively. The user can form functions using the objects initialized to create more complex objects with elementary math operations and functions.
 - The elementary math operations and functions can be performed in the same way as the operations in `numpy`.
-- The constructor of a `variable` object takes in a scalar or a vector.
-- The user can calculate the derivative(s) and the output value(s) at a targeting evaluation point.
 
-Below are some example scenarios to demonstrate how the module works:
-
+Below are some examples to demonstrate how the module works:
 
 ```python
 import math
@@ -149,19 +143,19 @@ print("circumference at radius = 10:", area.der)
 ###### Case 2: Evaluate value and partial derivatives of 1 - e^(-rx), x = 0.5, r = 5
 
 ```python
-# define CDF of exponential distribution
+# define function
 def function(x,r):
     func1 = 1-ad.exp(-r*x)
     return func1
 
-
+# pass function and list of values at which to evaluate 
 output_value, partial_ders = ad.evaluate(func=function, vals=[0.5, 5])
 
-# value of CDF function
+# value of function
 print("output value at x = 0.5, r = 5", output_value) 
 >>> 0.9179
 
-# value of PDF function (i.e. derivative of CDF)
+# derivative of function 
 print("partial derivatives at x = 0.5, r = 5", partial_ders)
 >>> [0.4104, 0.0410]
 ```
@@ -169,16 +163,20 @@ print("partial derivatives at x = 0.5, r = 5", partial_ders)
 ###### Case 3: Evaluate value and jacobian of f = [[xy + cos(x)], [x + y + cos(y)]]
 
 ```python
+# define function
 def function(x,y):
     func1 = x * y + ad.cos(x)
     func2 = x + y + ad.cos(y)
     return [func1, func2]
 
+# pass function and list of values at which to evaluate 
 output_value, jacobian = ad.evaluate(func=function, vals=[1, 1])
 
+# value of function
 print("output value at x = 1, y = 1", output_value)
 >>> [1.5403, 2.5403]
 
+# derivative of function
 print("jacobian at x = 1, y = 1", jacobian) # [[]]
 >>> [[0.1585, 1],
      [1, 0.1585]]
@@ -335,6 +333,7 @@ If the user does not pass in an input for the `seed` argument, it is assumed tha
 ```python
 output_value, jacobian = ad.evaluate(func=function, vals=[0, 1], seed=[[2, 0], [0, 3]])
 ```
+In general, the length of the outer list and the lengths of each of the inner lists for seed should equal the total number of variables of the function passed. 
 
 
 ### Elementary Operations
@@ -417,6 +416,24 @@ The Awesomediff Team's interest in automatic differentiation is driven by Data S
 We will showcase the power of automatic differentiation by building a [gradient descent solver](https://towardsdatascience.com/gradient-descent-algorithm-and-its-variants-10f652806a3) that leverages `awesomediff`'s functionality to find the minimum of a differentiable cost function. We will provide several cost functions, including mean squared error.
 
 We would also like to provide an implementation of the Fisher Scoring Algorithm (discussed [here](https://stats.stackexchange.com/questions/176351/implement-fisher-scoring-for-linear-regression) for example) to approximate the Maximum Likelihood Estimators for linear regression.
+
+#### Newton's Method
+
+In numerical analysis, Newton's method is a root-finding algorithm which which produces successively better approximations to the roots (or zeroes) of a real-valued function. The most basic version starts with a single-variable function f defined for a real variable x, the function's derivative f′, and an initial guess x0 for a root of f. If the function satisfies sufficient assumptions and the initial guess is close, then 
+
+![Newton](resources/Newton.png?raw=true). 
+
+Our package provides this root-finding algorithm. The user can input a function and a starting point, and optionally specify stopping conditions(max iteration or change in function value), the function is expected to return one of the roots of the function if it has one.  There are two cases where the function cannot find a root. In the first case, the function will return None if we reach the max iteration but the change in function value is less than default/specified epsilon. In the second case, the function also returns None when the function derivative is 0. 
+
+Below is an illustration of how to implement Newton's method through uni_Newton function from Awesomediff package. If no root is found, a message explaining what might be the possible cause will be displayed.
+
+```python
+def root_finding(a):
+    return a**2 + 2*a + 1
+    
+root = uni_Newton(root_finding, 50)
+>>> 9.689480066299438e-06
+```
 
 #### Additional Use Cases
 
