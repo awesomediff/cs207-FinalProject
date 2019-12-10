@@ -358,7 +358,7 @@ class LinearRegression(Model):
 
         # Prepare parameters and initialize weights:
         #initial_weights = [random.uniform(0,1) for _ in range(n_weights)]
-        initial_weights = [0 for _ in range(n_weights)]
+        initial_weights = [1 for _ in range(n_weights)]
 
         # Invoke solver (on standardized data):
         weights = self.solver.solve(self.model_params,initial_weights,X,y)
