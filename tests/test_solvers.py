@@ -37,7 +37,91 @@ def test_uni_Newton_func():
     with pytest.raises(ValueError):
         ad.uni_Newton(root_finding, 3)
 
+def test_helpers():
+
+    # Check inputs:
+    X = [[1,2],[3,4]]
+    y1 = [[1,2]]
+    y2 = [1,2,3]
+    with pytest.raises(AssertionError):
+        X,y = ad.solvers._check_inputs(X,y2)
+
+    
+    # Transpose:
+    M = [[1,2,3],[4,5,6]]
+    Mt = ad.transpose(M,check=True)
+    assert Mt == [[1,4],[2,5],[3,6]]
+
+    # Mean and variance:
+    assert ad.mean([1,2,3,4,5])==np.mean([1,2,3,4,5])
+    assert ad.variance([1,2,3,4,5])==np.var([1,2,3,4,5])
+
+    # Standardization:
+    X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+    ad_result = np.array( ad.standardize(X,check=True) ).flatten()
+    np_result = ( (X-X.mean(axis=0))/X.std(axis=0) ).flatten()
+    assert np.isclose( ad_result , np_result ).all()
+
+    # MSE:
+    y_true = np.array([2,4,25,4,25,63,44])
+    y_pred = np.array([3,6,27,5,22,66,45])
+    ad_mse = ad.mean_squared_error(y_true,y_pred)
+    np_mse = ((y_true-y_pred)**2).mean()
+    assert ad_mse == np_mse
+
+    # RSS:
+    y_true = np.array([2,4,25,4,25,63,44])
+    y_pred = np.array([3,6,27,5,22,66,45])
+    ad_rss = ad.sum_square_residuals(y_true,y_pred)
+    np_rss = ((y_true-y_pred)**2).sum()
+    assert ad_rss == np_rss
+
+    # TSS:
+    y_true = np.array([2,4,25,4,25,63,44])
+    ad_tss = ad.total_sum_squares(y_true)
+    np_tss = ((y_true-y_true.mean())**2).sum()
+    assert ad_tss == np_tss
+
+    # R2 score:
+    y_true = np.array([2,4,25,4,25,63,44])
+    y_pred = np.array([3,6,27,5,22,66,45])
+    ad_r2 = ad.r2_score(y_true,y_pred)
+    np_r2 = 1 - ad.sum_square_residuals(y_true,y_pred)/((y_true-y_true.mean())**2).sum()
+    assert ad_r2 == np_r2
+
+def test_superclasses():
+
+    X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+    y = np.array([13,-2.5,-1,6,15.5,-23.5])
+    model_params = dict()
+    weights = []
+    placeholder_argument = None
+
+    model = ad.Model()
+    with pytest.raises(NotImplementedError):
+        model._pack_weights(model_params,placeholder_argument)
+    with pytest.raises(NotImplementedError):
+        model._unpack_weights(model_params,weights)
+    with pytest.raises(NotImplementedError):
+        model._loss(model_params,weights,X,y)
+    with pytest.raises(NotImplementedError):
+        model._predict(model_params,weights,X)
+    with pytest.raises(NotImplementedError):
+        model.predict(X)
+    with pytest.raises(NotImplementedError):
+        model.fit(X,y)
+    with pytest.raises(NotImplementedError):
+        model.score(X,y)
+
+    initial_weights = []
+
+    solver = ad.Solver(model)
+    with pytest.raises(NotImplementedError):
+        solver.solve(model_params,initial_weights,X,y)
+
 def test_linear_regression():
+
+    # Test with and without intercept; with and without standardization.
 
     X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
     y = np.array([13,-2.5,-1,6,15.5,-23.5])
@@ -81,3 +165,21 @@ def test_linear_regression():
     assert np.isclose(reg.intercept,sklearn_intercept,atol=0.1)
     assert np.isclose(ad_result,sklearn_coefs,atol=0.1).all()
     assert np.isclose(reg.score(X,y),sklearn_score,atol=0.01).all()
+
+def test_lasso_regression():
+
+    X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+    y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+    reg = ad.LassoRegression(fit_intercept=True,standardize=True,max_iter=2000,learning_rate=0.05,l1_penalty=1.0)
+    reg.fit(X,y)
+    assert reg.score(X,y)>0.99
+
+def test_ridge_regression():
+
+    X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+    y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+    reg = ad.RidgeRegression(fit_intercept=True,standardize=True,max_iter=2000,learning_rate=0.05,l2_penalty=1.0)
+    reg.fit(X,y)
+    assert reg.score(X,y)>0.99
