@@ -10,12 +10,15 @@ from awesomediff.func import sinh
 from awesomediff.func import cosh
 from awesomediff.func import tanh
 from awesomediff.func import log
+from awesomediff.func import logb
 from awesomediff.func import sqrt
 from awesomediff.func import exp
 from awesomediff.func import logistic
 from awesomediff.solvers import uni_Newton
 from awesomediff.solvers import Model
 from awesomediff.solvers import LinearRegression
+from awesomediff.solvers import LassoRegression
+from awesomediff.solvers import RidgeRegression
 from awesomediff.solvers import Solver
 from awesomediff.solvers import GradientDescent
 from awesomediff.solvers import l1_norm
@@ -41,12 +44,15 @@ __all__ = [
     'cosh',
     'tanh',
     'log',
+    'logb',
     'sqrt',
     'exp',
     'logistic',
     'uni_Newton',
     'Model',
     'LinearRegression',
+    'LassoRegression',
+    'RidgeRegression',
     'Solver',
     'GradientDescent',
     'l1_norm',

@@ -7,11 +7,14 @@ class variable:
         """
             Initialize a variable object
             with a specified value and derivative.
+            Expect scalar for val. Expect scalar
+            or a numpy array for der.
             If no derivative is specified,
             a seed of 1 is assumed.
         """
-
+        
         self._val = val
+        assert isinstance(der, (np.ndarray, float, int)), "der must be a scalar or a numpy array"
         self._der = der
 
     @property
@@ -373,3 +376,6 @@ def evaluate(func,vals,seed=None):
         jacobian = outputs.der
         
     return output_value, jacobian
+
+
+

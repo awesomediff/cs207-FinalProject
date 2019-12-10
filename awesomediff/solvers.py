@@ -1,6 +1,6 @@
 from inspect import signature
 
-import random
+#import random
 
 from awesomediff.core import variable
 from awesomediff.core import evaluate
@@ -17,35 +17,52 @@ from awesomediff.func import tanh
 
 
 def l1_norm(vals):
-    return sum([abs(v) for v in vals])
+    """Calculate the L1 norm of a vector."""
+    if len(vals)==0:
+        return []
+    try:
+        # If inputs are awesomediff.variable objects:
+        return sum([abs(v.val) for v in vals])
+    except:
+        return sum([abs(v) for v in vals])
 
 def l2_norm(vals):
-    return sqrt(sum([v**2 for v in vals])).val
+    """Calculate the L2 norm of a vector."""
+    if len(vals)==0:
+        return []
+    try:
+        # If inputs are awesomediff.variable objects:
+        vals[0].val
+        return sqrt(sum([v**2 for v in vals]))
+    except:
+        return sqrt(sum([v**2 for v in vals])).val
 
 def mean(vals):
+    """Calculate the mean of a list of values."""
     return sum([v for v in vals])/len(vals)
 
 def variance(vals):
+    """Calculate the variance of a list of variables."""
     mu = mean(vals)
     return sum([(v-mu)**2 for v in vals])/len(vals)
  
 def mean_squared_error(y_true,y_pred):
- 
+    """Calculate the MSE between a list of y values and predictions."""
     assert len(y_true)==len(y_pred)
     return sum([(true-pred)**2 for true,pred in zip(y_true,y_pred)]) / len(y_true)
  
 def sum_square_residuals(y_true,y_pred):
- 
+    """Calculate the RSS between a list of values and predictions."""
     assert len(y_true)==len(y_pred)
     return sum([(true-pred)**2 for true,pred in zip(y_true,y_pred)])
  
 def total_sum_squares(y_true):
- 
+    """Calculate the TSS of a list of values."""
     y_bar = mean(y_true)
     return sum([(true-y_bar)**2 for true in y_true])
  
 def r2_score(y_true,y_pred):
- 
+    """Calculate the coefficient of determination."""
     assert len(y_true)==len(y_pred)
     rss = sum_square_residuals(y_true,y_pred)
     tss = total_sum_squares(y_true)
@@ -70,22 +87,27 @@ def transpose(M,check=True):
     return new_M
 
 
-def standardize(M,check=True,return_stats=False):
+def standardize(M,feature_means=None,feature_stdevs=None,check=True,return_stats=False):
     """
         Transform a matrix (list of lists) so that each column has mean 0 and standard deviation 1.
         If `return_stats==True`, returns a tuple: transposed_matrix, list_of_means, list_of_standard_deviations.
         If `check==True`, ensures that the input is a list of lists.
+        If `feature_means` and `feature_stdevs` are not specified, they are calculated from the data.
     """
 
     if check:
         M = _check_inputs(M)
+        if feature_means is not None:
+            assert len(feature_means) == len(M[0])
+        if feature_stdevs is not None:
+            assert len(feature_stdevs) == len(M[0])
     M_ = []
     Mt = transpose(M,check=False)
     mus = []
     sigmas = []
-    for row in Mt:
-        mu = mean(row)
-        sigma = sqrt(variance(row)).val
+    for r,row in enumerate(Mt):
+        mu = mean(row) if feature_means is None else feature_means[r]
+        sigma = sqrt(variance(row)).val if feature_stdevs is None else feature_stdevs[r]
         M_.append( [(v-mu)/sigma for v in row] )
         mus.append(mu)
         sigmas.append(sigma)
@@ -128,9 +150,11 @@ def _check_inputs(X,y=None):
 
 class Solver:
 
+    """A superclass for defining a solver."""
+
     def __init__(self,model,**solver_params):
         self.model = model
-        raise NotImplementedError
+        pass
 
     def solve(self,model_params,initial_weights,X,y):
         raise NotImplementedError
@@ -138,23 +162,35 @@ class Solver:
 
 class GradientDescent(Solver):
     
-    def __init__(self,model,learning_rate=0.01,rel_tol=1e-5,abs_tol=1e-8,max_iter=10000,random_seed=None,verbose=False):
+    def __init__(self,model,learning_rate=0.01,rel_tol=1e-5,abs_tol=1e-8,max_iter=10000,verbose=False):
+
+        """
+            Solver using gradient descent.
+            :model: An instance of the Model class (or one of its subclasses).
+            :learning_rate: The learning rate for gradient descent.
+            :rel_tol: Stop if the relative change in loss between two iterations is less than this value.
+            :abs_tol:  Stop if the absolute change in loss between two iterations is less than this value.
+            :max_iter: Stop if this number of iterations is exceeded.
+            :verbose: Print information after each step.
+        """
         
         self.model = model
         self.learning_rate = learning_rate
         self.rel_tol = rel_tol
         self.abs_tol = abs_tol
         self.max_iter = max_iter
-        self.random_seed = random_seed
         self.verbose = verbose
 
     def solve(self,model_params,initial_weights,X,y):
 
-        # Set random seed:
-        if self.random_seed is not None:
-            random.seed(self.random_seed)
-        else:
-            random.seed()
+        """
+            Perform gradient descent until a stopping condition is meet.
+            :model_params: A dictionary of model parameters.
+            :initial_weights: A list of initial weights.
+            :X: A list of list representing teh value of the predictors.
+            :y: A list representing teh value of the response variable.
+        """
+        
         alpha = self.learning_rate
         def loss_func(*weights):
             return self.model._loss(model_params,weights,X,y)
@@ -162,9 +198,9 @@ class GradientDescent(Solver):
         prev_loss = None
         prev_weights = initial_weights
 
-        converged = False
+        self.converged = False
         iteration = 0
-        while not converged:
+        while not self.converged:
             iteration += 1
             loss,grad = evaluate(loss_func,prev_weights)
             weights = [w - alpha * gr for w,gr in zip(prev_weights,grad)]
@@ -172,29 +208,31 @@ class GradientDescent(Solver):
                 print("Step {}: loss={}; grad={}".format(iteration,loss,grad))
                 #print("Step {}: loss={}".format(iteration,loss))
             # Check for stopping conditions:
+            if loss == float('Inf'):
+                self.converged = False
+                if self.verbose:
+                    print("Stop : loss=Inf")
+                break
             if iteration >= self.max_iter:
-                converged = True
+                self.converged = False
                 if self.verbose:
                     print("Stop : iteration={}".format(iteration))
                 break
             if (prev_loss is not None) and (abs(loss-prev_loss) < self.abs_tol):
-                converged = True
+                self.converged = True
                 if self.verbose:
                     print("Stop : abs_tol={}".format(abs(loss-prev_loss)))
                 break
             if (prev_loss is not None) and (abs((loss-prev_loss)/prev_loss) < self.rel_tol):
-                converged = True
+                self.converged = True
                 if self.verbose:
                     print("Stop : rel_tol={}".format(abs((loss-prev_loss)/prev_loss)))
                 break
             prev_loss = loss
             prev_weights = weights
         
-        if not converged:
+        if not self.converged:
             print("Warning: Gradient descent did not converge.")
-        
-        # Un-set random seed:
-        random.seed()
             
         return weights
 
@@ -242,7 +280,13 @@ class LinearRegression(Model):
     """Ordinary least squares regression."""
 
     def __init__(self,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
-        """Initialize the model."""
+        """
+            Linear regression model.
+            :fit_intercept: A boolean indicating whether or not to include an intercept term.
+            :standardize: A boolean indicating whether or not to standardize the data (mean=0,stdev=1) before fitting.
+            :solver: A string indicating which solver to use (currently only "gradient_descent" is supported).
+            :solver_kwargs: A dict of optional arguments to pass to the solver.
+        """
 
         valid_solvers = ['gradient_descent']
         if solver=='gradient_descent':
@@ -298,19 +342,28 @@ class LinearRegression(Model):
         intercept,coefs = cls._unpack_weights(model_params,weights)
         predictions = []
         for vals in X:
-            pred = intercept
-            for x,coef in zip(vals,coefs):
-                pred += x*coef
+            pred = sum([x*coef for x,coef in zip(vals,coefs)])
+            pred += intercept
             predictions.append(pred)
         return predictions
 
     def predict(self,X):
-        """Predict X."""
+        """
+            Predict X.
+            
+            INPUTS:
+            :X: A list of lists representing the predictors.
+
+            OUTPUT:
+            A list of predictions.
+        """
 
         X = _check_inputs(X,y=None)
         assert len(X[0])==len(self.coefs), "X does not match dimensions of fitted model."
         if self.standardize:
-            X = standardize(X,check=False,return_stats=False)
+            feature_means = self.feature_means
+            feature_stdevs = self.feature_stdevs
+            X = standardize(X,feature_means=feature_means,feature_stdevs=feature_stdevs,check=False,return_stats=False)
         predictions = []
         for vals in X:
             pred = sum([x*coef for x,coef in zip(vals,self.coefs)])
@@ -319,7 +372,13 @@ class LinearRegression(Model):
         return predictions
 
     def fit(self,X,y):
-        """Fit the model to X and y."""
+        """
+            Fit the model to X and y.
+            
+            INPUTS:
+            :X: A list of lists representing the predictors.
+            :y: A list representing the response variable.
+        """
 
         # Check inputs:
         X,y = _check_inputs(X,y)
@@ -328,11 +387,13 @@ class LinearRegression(Model):
 
         # Standardize data:
         if self.standardize:
-            X = standardize(X,check=False,return_stats=False)
+            X,feature_means,feature_stdevs = standardize(X,check=False,return_stats=True)
+            self.feature_means = feature_means
+            self.feature_stdevs = feature_stdevs
 
         # Prepare parameters and initialize weights:
         #initial_weights = [random.uniform(0,1) for _ in range(n_weights)]
-        initial_weights = [0 for _ in range(n_weights)]
+        initial_weights = [1 for _ in range(n_weights)]
 
         # Invoke solver (on standardized data):
         weights = self.solver.solve(self.model_params,initial_weights,X,y)
@@ -343,7 +404,16 @@ class LinearRegression(Model):
         self.coefs = coefs
 
     def score(self,X,y):
-        """Return the score of y and the predictions made with X."""
+        """
+            Return the score of y and the predictions made with X.
+            
+            INPUTS:
+            :X: A list of lists representing the predictors.
+            :y: A list representing the response variable.
+
+            OUTPUT:
+            A float representing the coefficient of determination (R^2 score).
+        """
 
         X,y = _check_inputs(X,y)
         return r2_score(y,self.predict(X))
@@ -352,10 +422,10 @@ class LinearRegression(Model):
 class LassoRegression(LinearRegression):
     """Linear regression model with L1 regularization."""
 
-    def __init__(self,l1_penalty=0.1,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
+    def __init__(self,l1_penalty=1.0,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
         """Initialize LinearRegression model with adjustments for L2 regularization."""
 
-        super().__init__(fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs)
+        super().__init__(fit_intercept=fit_intercept,standardize=standardize,solver=solver,**solver_kwargs)
 
         # Store model parameters to pass to solver:
         self.l1_penalty = l1_penalty
@@ -372,10 +442,10 @@ class LassoRegression(LinearRegression):
 class RidgeRegression(LinearRegression):
     """Linear regression model with L2 regularization."""
 
-    def __init__(self,l2_penalty=0.1,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
+    def __init__(self,l2_penalty=1.0,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
         """Initialize LinearRegression model with adjustments for L2 regularization."""
 
-        super().__init__(fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs)
+        super().__init__(fit_intercept=fit_intercept,standardize=standardize,solver=solver,**solver_kwargs)
 
         # Store model parameters to pass to solver:
         self.l2_penalty = l2_penalty
@@ -389,65 +459,50 @@ class RidgeRegression(LinearRegression):
         return mean_squared_error( y , cls._predict(model_params,weights,X) ) + l2_penalty * l2_norm(weights)
 
 
-
-def gradientDescent(func, initial, rate=0.01, precision=0.00001, iteration = 2000):
-	# df = func
-	count = 0
-	current = initial
-	while (step>precision and count <iteration):
-		last = current
-		current = current - rate*func(last)
-		step = abs(current-last)
-		count+=1
-
-	return current
-
-
 # Newton-Raphson Method
 def uni_Newton(func, initial, max_iter=200, epsilon=1e-06):
-	'''
+    '''
 
-	:param func: univariate function
-	:param initial: starting point(scalar)
-	:param max_iter: max iteration
-	:param epsilon: change in function value < epsilon (stopping condition)
-	:return: if root is found, return the root. Otherwise None
+    :param func: univariate function
+    :param initial: starting point(scalar)
+    :param max_iter: max iteration
+    :param epsilon: change in function value < epsilon (stopping condition)
+    :return: if root is found, return the root. Otherwise None
 
-	def root_finding(a):
-    	return a**2 + 2*a + 1
+    def root_finding(a):
+        return a**2 + 2*a + 1
     root = uni_Newton(root_finding, 50)
     root_finding(root) #gives something close to 0
-	'''
+    '''
 
-	# Check Input formats
-	sig = signature(func)  # function should take only one scalar input
-	if len(sig.parameters) != 1:
-		raise ValueError('The function should be uni-variate')
+    # Check Input formats
+    sig = signature(func)  # function should take only one scalar input
+    if len(sig.parameters) != 1:
+        raise ValueError('The function should be uni-variate')
 
-	# check the initial point is a scalar
-	try:
-		int(initial)
-	except ValueError:
-		print('The input must be a scalar')
+    # check the initial point is a scalar
+    try:
+        int(initial)
+    except ValueError:
+        print('The input must be a scalar')
 
-	current_x = int(initial)
-	for i in range(max_iter):
-		func_val, func_der = evaluate(func, current_x)
+    current_x = int(initial)
+    for i in range(max_iter):
+        func_val, func_der = evaluate(func, current_x)
 
-		if abs(func_val) <= epsilon:
-			print('Root Approximation Found!', ' root = ', current_x)
-			return current_x
+        if abs(func_val) <= epsilon:
+            print('Root Approximation Found!', ' root = ', current_x)
+            return current_x
 
-		if i == max_iter - 1:
-			print(
-				'Max iteration reached, failed to find the root. The function may not have a root or try increase iteration numbers')
-			return None
+        if i == max_iter - 1:
+            print(
+                'Max iteration reached, failed to find the root. The function may not have a root or try increase iteration numbers')
+            return None
 
-		# check if it's a bad derivative(0)
-		if abs(func_der[0]) <= 10 ** (-15):
-			print('Bad Starting Point: Derivative of the function = 0 at some point')
-			return None
-			break
+        # check if it's a bad derivative(0)
+        if abs(func_der[0]) <= 10 ** (-15):
+            print('Bad Starting Point: Derivative of the function = 0 at some point')
+            return None
 
-		current_x = current_x - func_val / func_der[0]
+        current_x = current_x - func_val / func_der[0]
 
