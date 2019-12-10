@@ -296,7 +296,7 @@ print("derivative at x = pi:", f.der) # 1.837e-16
 
 The `evaluate` function takes as inputs 1) `func`: a user-defined function that involves any elementary operations supported by `awesomediff`, and 2) `vals`: a value at which to evaluate the function (a list of values if the function is multivariate). `evaluate` returns the output value and the jacobian of the function evaluated at the specified value as arrays.  
 
-`evaluate` also takes an optional argument `seed` if the user wishes to set the seeds of variables to a value other than 1. Otherwise, `evaluate` uses a default value of 1 for seed. For further details on how to provide an input for `seed`, see ["Input for Seed"](#Input-for-Seed).  
+`evaluate` also takes an optional argument `seed` if the user wishes to set the seeds of variables to a value other than 1. Otherwise, `evaluate` uses a default value of 1 for seed. For further details on how to provide an input for `seed`, see [Input for Seed](#Input-for-Seed).  
 
 
 The example below steps through how a user would call `evaluate` to compute the output values and the jacobian of a multivariate vector function at a specified set of values. 
@@ -647,10 +647,4 @@ class Model:
         raise NotImplementedError
 ```
 
-### Wishlist of Future Features
-
-Possible extensions of awesomediff's toolkit include
-
-- Computing maximum likelihood using the Fisher Scoring Algorithm.
-- Implementing hill-climbing algorithms.
 
