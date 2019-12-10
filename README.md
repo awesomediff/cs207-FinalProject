@@ -10,4 +10,4 @@ Members: Wanxi Yang, Gabriel Pestre, Claire Yang, Erin Yang
 
 ---
 
-Welcome to the `awesomediff` repository. Please visit the [documentation](docs/documentation.md) page for information about how to [install and use](docs/documentation.md#how-to-use-awesomediff) the `awesomediff` automatic differentiation library and data science toolkit.
+Welcome to the `awesomediff` repository. Please visit the [documentation](https://github.com/awesomediff/cs207-FinalProject/blob/master/docs/documentation.md) page for information about how to install and use the `awesomediff` automatic differentiation library and data science toolkit.
