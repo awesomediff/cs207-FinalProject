@@ -103,7 +103,7 @@ def standardize(M,feature_means=None,feature_stdevs=None,check=True,return_stats
     sigmas = []
     for r,row in enumerate(Mt):
         mu = mean(row) if feature_means is None else feature_means[r]
-        sigma = sqrt(variance(row)).val if feature_stdevs is None else feature_means[r]
+        sigma = sqrt(variance(row)).val if feature_stdevs is None else feature_stdevs[r]
         M_.append( [(v-mu)/sigma for v in row] )
         mus.append(mu)
         sigmas.append(sigma)
