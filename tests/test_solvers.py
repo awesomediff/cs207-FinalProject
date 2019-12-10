@@ -171,7 +171,7 @@ def test_lasso_regression():
     X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
     y = np.array([13,-2.5,-1,6,15.5,-23.5])
 
-    reg = ad.LassoRegression(fit_intercept=True,standardize=True,max_iter=2000,learning_rate=0.05,l1_penalty=1.0)
+    reg = ad.LassoRegression(fit_intercept=True,standardize=True,max_iter=2000,learning_rate=0.05,l1_penalty=1.0,verbose=True)
     reg.fit(X,y)
     assert reg.score(X,y)>0.99
 
@@ -180,6 +180,6 @@ def test_ridge_regression():
     X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
     y = np.array([13,-2.5,-1,6,15.5,-23.5])
 
-    reg = ad.RidgeRegression(fit_intercept=True,standardize=True,max_iter=2000,learning_rate=0.05,l2_penalty=1.0)
+    reg = ad.RidgeRegression(fit_intercept=True,standardize=True,max_iter=2000,learning_rate=0.05,l2_penalty=1.0,verbose=True)
     reg.fit(X,y)
     assert reg.score(X,y)>0.99
