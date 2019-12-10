@@ -321,9 +321,8 @@ class LinearRegression(Model):
         intercept,coefs = cls._unpack_weights(model_params,weights)
         predictions = []
         for vals in X:
-            pred = intercept
-            for x,coef in zip(vals,coefs):
-                pred += x*coef
+            pred = sum([x*coef for x,coef in zip(vals,coefs)])
+            pred += intercept
             predictions.append(pred)
         return predictions
 
