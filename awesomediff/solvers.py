@@ -1,6 +1,6 @@
 from inspect import signature
 
-import random
+#import random
 
 from awesomediff.core import variable
 from awesomediff.core import evaluate
@@ -17,6 +17,7 @@ from awesomediff.func import tanh
 
 
 def l1_norm(vals):
+    """Calculate the L1 norm of a vector."""
     if len(vals)==0:
         return []
     try:
@@ -26,6 +27,7 @@ def l1_norm(vals):
         return sum([abs(v) for v in vals])
 
 def l2_norm(vals):
+    """Calculate the L2 norm of a vector."""
     if len(vals)==0:
         return []
     try:
@@ -36,29 +38,31 @@ def l2_norm(vals):
         return sqrt(sum([v**2 for v in vals])).val
 
 def mean(vals):
+    """Calculate the mean of a list of values."""
     return sum([v for v in vals])/len(vals)
 
 def variance(vals):
+    """Calculate the variance of a list of variables."""
     mu = mean(vals)
     return sum([(v-mu)**2 for v in vals])/len(vals)
  
 def mean_squared_error(y_true,y_pred):
- 
+    """Calculate the MSE between a list of y values and predictions."""
     assert len(y_true)==len(y_pred)
     return sum([(true-pred)**2 for true,pred in zip(y_true,y_pred)]) / len(y_true)
  
 def sum_square_residuals(y_true,y_pred):
- 
+    """Calculate the RSS between a list of values and predictions."""
     assert len(y_true)==len(y_pred)
     return sum([(true-pred)**2 for true,pred in zip(y_true,y_pred)])
  
 def total_sum_squares(y_true):
- 
+    """Calculate the TSS of a list of values."""
     y_bar = mean(y_true)
     return sum([(true-y_bar)**2 for true in y_true])
  
 def r2_score(y_true,y_pred):
- 
+    """Calculate the coefficient of determination."""
     assert len(y_true)==len(y_pred)
     rss = sum_square_residuals(y_true,y_pred)
     tss = total_sum_squares(y_true)
@@ -146,6 +150,8 @@ def _check_inputs(X,y=None):
 
 class Solver:
 
+    """A superclass for defining a solver."""
+
     def __init__(self,model,**solver_params):
         self.model = model
         pass
@@ -156,23 +162,35 @@ class Solver:
 
 class GradientDescent(Solver):
     
-    def __init__(self,model,learning_rate=0.01,rel_tol=1e-5,abs_tol=1e-8,max_iter=10000,random_seed=None,verbose=False):
+    def __init__(self,model,learning_rate=0.01,rel_tol=1e-5,abs_tol=1e-8,max_iter=10000,verbose=False):
+
+        """
+            Solver using gradient descent.
+            :model: An instance of the Model class (or one of its subclasses).
+            :learning_rate: The learning rate for gradient descent.
+            :rel_tol: Stop if the relative change in loss between two iterations is less than this value.
+            :abs_tol:  Stop if the absolute change in loss between two iterations is less than this value.
+            :max_iter: Stop if this number of iterations is exceeded.
+            :verbose: Print information after each step.
+        """
         
         self.model = model
         self.learning_rate = learning_rate
         self.rel_tol = rel_tol
         self.abs_tol = abs_tol
         self.max_iter = max_iter
-        self.random_seed = random_seed
         self.verbose = verbose
 
     def solve(self,model_params,initial_weights,X,y):
 
-        # Set random seed:
-        if self.random_seed is not None:
-            random.seed(self.random_seed)
-        else:
-            random.seed()
+        """
+            Perform gradient descent until a stopping condition is meet.
+            :model_params: A dictionary of model parameters.
+            :initial_weights: A list of initial weights.
+            :X: A list of list representing teh value of the predictors.
+            :y: A list representing teh value of the response variable.
+        """
+        
         alpha = self.learning_rate
         def loss_func(*weights):
             return self.model._loss(model_params,weights,X,y)
@@ -215,9 +233,6 @@ class GradientDescent(Solver):
         
         if not converged:
             print("Warning: Gradient descent did not converge.")
-        
-        # Un-set random seed:
-        random.seed()
             
         return weights
 
@@ -265,7 +280,13 @@ class LinearRegression(Model):
     """Ordinary least squares regression."""
 
     def __init__(self,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
-        """Initialize the model."""
+        """
+            Linear regression model.
+            :fit_intercept: A boolean indicating whether or not to include an intercept term.
+            :standardize: A boolean indicating whether or not to standardize the data (mean=0,stdev=1) before fitting.
+            :solver: A string indicating which solver to use (currently only "gradient_descent" is supported).
+            :solver_kwargs: A dict of optional arguments to pass to the solver.
+        """
 
         valid_solvers = ['gradient_descent']
         if solver=='gradient_descent':
@@ -327,7 +348,15 @@ class LinearRegression(Model):
         return predictions
 
     def predict(self,X):
-        """Predict X."""
+        """
+            Predict X.
+            
+            INPUTS:
+            :X: A list of lists representing the predictors.
+
+            OUTPUT:
+            A list of predictions.
+        """
 
         X = _check_inputs(X,y=None)
         assert len(X[0])==len(self.coefs), "X does not match dimensions of fitted model."
@@ -343,7 +372,13 @@ class LinearRegression(Model):
         return predictions
 
     def fit(self,X,y):
-        """Fit the model to X and y."""
+        """
+            Fit the model to X and y.
+            
+            INPUTS:
+            :X: A list of lists representing the predictors.
+            :y: A list representing the response variable.
+        """
 
         # Check inputs:
         X,y = _check_inputs(X,y)
@@ -369,7 +404,16 @@ class LinearRegression(Model):
         self.coefs = coefs
 
     def score(self,X,y):
-        """Return the score of y and the predictions made with X."""
+        """
+            Return the score of y and the predictions made with X.
+            
+            INPUTS:
+            :X: A list of lists representing the predictors.
+            :y: A list representing the response variable.
+
+            OUTPUT:
+            A float representing the coefficient of determination (R^2 score).
+        """
 
         X,y = _check_inputs(X,y)
         return r2_score(y,self.predict(X))
