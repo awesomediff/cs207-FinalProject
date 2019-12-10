@@ -459,21 +459,6 @@ class RidgeRegression(LinearRegression):
         return mean_squared_error( y , cls._predict(model_params,weights,X) ) + l2_penalty * l2_norm(weights)
 
 
-
-def gradientDescent(func, initial, rate=0.01, precision=0.00001, iteration = 2000):
-    # df = func
-    count = 0
-    current = initial
-    step = precision*2 # Initialize so that first step gets taken.
-    while (step>precision and count <iteration):
-        last = current
-        current = current - rate*func(last)
-        step = abs(current-last)
-        count+=1
-
-    return current
-
-
 # Newton-Raphson Method
 def uni_Newton(func, initial, max_iter=200, epsilon=1e-06):
     '''
