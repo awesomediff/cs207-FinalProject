@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="awesomediff", # Replace with your own username
-    version="1.2.0",
+    version="1.3.0",
     author="Gabriel Pestre, Claire Yang, Erin Yang, Wanxi Yang",
     author_email="claireyang@g.harvard.edu",
     description="A package for automatic differentiation",
