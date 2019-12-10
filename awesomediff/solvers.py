@@ -382,7 +382,7 @@ class LassoRegression(LinearRegression):
     def __init__(self,l1_penalty=1.0,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
         """Initialize LinearRegression model with adjustments for L2 regularization."""
 
-        super().__init__(fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs)
+        super().__init__(fit_intercept=fit_intercept,standardize=standardize,solver=solver,**solver_kwargs)
 
         # Store model parameters to pass to solver:
         self.l1_penalty = l1_penalty
@@ -402,7 +402,7 @@ class RidgeRegression(LinearRegression):
     def __init__(self,l2_penalty=1.0,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
         """Initialize LinearRegression model with adjustments for L2 regularization."""
 
-        super().__init__(fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs)
+        super().__init__(fit_intercept=fit_intercept,standardize=standardize,solver=solver,**solver_kwargs)
 
         # Store model parameters to pass to solver:
         self.l2_penalty = l2_penalty
