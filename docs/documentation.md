@@ -3,12 +3,11 @@ Documentation
 
 ## Introduction
 
-`awesomediff` is a Python 3 package designed by and for Data Scientists to help implement solving algorithms in Machine Learning. The package provides an implementation of the Forward Mode of Automatic Differentiation using operator overloading. `awesomediff` uses AD to calculate the gradients of commonly used loss functions in Machine Learning, such as mean square errors (MSE). Our package offers a special focus on optimization of regression problem and can handle both ridge and Lasso regularization cases through gradient descent. The package also provides additional root-finding feature utilizing Newton’s method. 
-
+`awesomediff` is a Python 3 package designed for data scientists to help implement solving algorithms in Machine Learning. The package provides an implementation of the Forward Mode of Automatic Differentiation using operator overloading. `awesomediff` uses AD to calculate the gradients of commonly used loss functions in Machine Learning. Our package offers a special focus on optimization of regression problem and can handle both Ridge and Lasso regularization cases through gradient descent. The package also provides additional root-finding feature utilizing Newton’s method.  
 
 Applications of Automatic Differentiation (AD) are numerous and play a key role in a wide range of fields, from demography to finance. We focus on applications in Machine Learning (ML), specifically the need to quickly and accurately compute the gradient of loss functions (i.e. its partial derivative with respect to each of the variables of interest).
 
-Many Machine Learning algorithms estimate the parameters of a model by starting with a guess, evaluating a loss function (which represents the distance between that guess and an ideal solution), and using the gradient of the loss function to determine in which direction to search for a better guess. This process is iterative, and may require computing the gradient of the loss function thousands of times until the algorithm reaches an acceptable solution. For this reason, Data Scientists need ways to calculate derivatives both efficiently and accurately.
+Many Machine Learning algorithms estimate the parameters of a model by starting with a guess, evaluating a loss function (which represents the distance between that guess and an ideal solution), and using the gradient of the loss function to determine in which direction to search for a better guess. This process is iterative, and may require computing the gradient of the loss function thousands of times until the algorithm reaches an acceptable solution. For this reason, data scientists need ways to calculate derivatives both efficiently and accurately.
 
 There are several approaches for solving derivatives, but there is a tradeoff between accuracy and computational complexity:
 - Numerical approximations typically rely evaluating the function at small intervals and using the change in value to estimate the slope. These approaches are generally easy to implement but suffer from approximation errors, especially for functions with high curvature.
@@ -113,12 +112,12 @@ def calc_area(r):
 area_circle, circumference = ad.evaluate(func=calc_area, vals=10)
 
 # area when radius = 10
-print("area at radius = 10:", area_circle)
->>> 314.159 
+>>> print("area at radius = 10:", area_circle)
+314.159 
 
 # derivative of area (i.e. circumference) when radius = 10
-print("circumference at radius = 10:", circumference) 
->>> 62.832
+>>> print("circumference at radius = 10:", circumference) 
+62.832
 ```
 
 In the case of a single univariate function, user can also directly instantiate `variable` object to calculate the output value and derivative
@@ -133,12 +132,12 @@ radius = ad.variable(10)
 area = calc_area(radius)
 
 # area when radius = 10
-print("area at radius = 10:", area.val)  
->>> 314.159 
+>>> print("area at radius = 10:", area.val)  
+314.159 
 
 # derivative of area (i.e. circumference) when radius = 10
-print("circumference at radius = 10:", area.der)
->>> 62.832
+>>> print("circumference at radius = 10:", area.der)
+62.832
 ```
 
 ###### Case 2: Evaluate value and partial derivatives of 1 - e^(-rx), x = 0.5, r = 5
@@ -153,12 +152,12 @@ def function(x,r):
 output_value, partial_ders = ad.evaluate(func=function, vals=[0.5, 5])
 
 # value of function
-print("output value at x = 0.5, r = 5", output_value) 
->>> 0.9179
+>>> print("output value at x = 0.5, r = 5", output_value) 
+0.9179
 
 # derivative of function 
-print("partial derivatives at x = 0.5, r = 5", partial_ders)
->>> [0.4104, 0.0410]
+>>> print("partial derivatives at x = 0.5, r = 5", partial_ders)
+[0.4104, 0.0410]  # [e^(-rx)r, e^(-rx)x]
 ```
 
 ###### Case 3: Evaluate value and jacobian of f = [[xy + cos(x)], [x + y + cos(y)]]
@@ -175,10 +174,10 @@ output_value, jacobian = ad.evaluate(func=function, vals=[1, 1])
 
 # value of function
 print("output value at x = 1, y = 1", output_value)
->>> [1.5403, 2.5403]
+>>> [1.5403, 2.5403] # [value of func1, value of func2]
 
 # derivative of function
-print("jacobian at x = 1, y = 1", jacobian) # [[]]
+print("jacobian at x = 1, y = 1", jacobian) # [[y-sin(x), x], [y, x+cos(y)]]
 >>> [[0.1585, 1],
      [1, 0.1585]]
 ```
@@ -224,7 +223,7 @@ print("jacobian at x = 1, y = 1", jacobian) # [[]]
     - `func.py`
       - Contains elementary math functions including trig functions, inverse trig functions, exponentials, hyperbolic functions, logistic function, logarithms, and square root. These functions are written on the basis of the `numpy` package.
     - `solvers.py`
-      - A module for the advanced features, which include solvers to implement machine learning loss functions.
+      - A module for the advanced features, which include solvers to implement machine learning loss functions and Newton's method.
   * Testing
     - The test files correspond to the files in the module.
     - The tests of the package are located in `tests` directory:
@@ -240,14 +239,13 @@ print("jacobian at x = 1, y = 1", jacobian) # [[]]
     - The installation code can be found in the ["How to use `awesomediff`"](#how-to-use-awesomediff) section.
   * Dependency
     - `awesomediff` is dependent on the `numpy` package for elementary math functions. We also use `pytest` for testing.
-  * Package
-    - We are not using a framework because this package is relatively straightforward. We will follow the templates and tutorials on PyPI for the packaging process
+ 
 
 ## Implementation Details
 
 ### `awesomediff` package structure
 
-The automatic differentiation functionality is stored in the `core` and `func` modules. The applications to machine learning cost functions are stored in the `solvers` modules. Additionally, we provide testing modules for each of these implementation modules.
+The automatic differentiation functionality is stored in the `core` and `func` modules. The applications to machine learning cost functions and Newton's method are stored in the `solvers` modules. Additionally, we provide testing modules for each of these implementation modules.
 
 The `awesomediff` package abstracts these different modules and allows users to access all functionality directly from the `awesomediff` namespace. We recommend the following import convention:
 ```python
@@ -269,9 +267,9 @@ All elementary operations performed on `variable` instances return new `variable
 
 `aweseomdiff`'s implementation of the forward mode of AD does not explicitly define a function graph. Instead, it overloads Python's operators (and defines special functions for common operations like `log` and `sin`), and allows Python's interpreter to build the function graph implicitly as it evaluates the functions.
 
-For simple functions, users can create `variable` objects with a specified value and derivative seed. The seed may be a scalar, or a vector of length `n`, where `n` is the number of variables in the function. (For more complex functions, we recommend using a `function` objects, which handles the creation of `variable` objects to avoid dimensionality issues.)
+For simple functions, users can create `variable` objects with a specified value (`val`) and derivative seed (`seed`). `val` expects a scalar. `seed` may be a scalar, or a numpy array of length `n`, where `n` is the number of variables in the function. (For computing the value and derivative/jacobian of more complex functions, we recommend calling `evaluate`, which handles the creation of `variable` objects internally). 
 
-The `variable` class is immutable. It has two attributes, `.val` and `.der`, which store the value and derivative of the function. (In the current implementation, both are scalars; future implementations will store derivatives as a vector.)
+The `variable` class is immutable. It has two attributes, `.val` and `.der`, which store the value and derivative of the function.
 
 The example below demonstrates how a `variable` can be created and used in functions to calculate the derivative and variable of any univariate function of [supported elementary operations](#Elementary-Operations).
 
@@ -294,9 +292,9 @@ print("derivative at x = pi:", f.der) # 1.837e-16
 
 ### The `evaluate` function
 
-The `evaluate` function takes as inputs 1) `func`: a user-defined function that involves any elementary operations supported by `awesomediff`, and 2) `vals`: a value at which to evaluate the function (a list of values if the function is multivariate). `evaluate` returns the output value and the jacobian of the function evaluated at the specified value as arrays.  
+The `evaluate` function takes as inputs 1) `func`: a user-defined function that involves any elementary operations supported by `awesomediff`, and 2) `vals`: a value at which to evaluate the function (a list of values if the function is multivariate). `vals` expects a scalar (float, int) or a list of scalars. `evaluate` returns the output value and the jacobian of the function evaluated at the specified value as arrays.  
 
-`evaluate` also takes an optional argument `seed` if the user wishes to set the seeds of variables to a value other than 1. Otherwise, `evaluate` uses a default value of 1 for seed. For further details on how to provide an input for `seed`, see ["Input for Seed"](#Input-for-Seed).  
+`evaluate` also takes an optional argument `seed` if the user wishes to set the seeds of variables to a value other than 1. Otherwise, `evaluate` uses a default value of 1 for seed. For further details on how to provide an input for `seed`, see [Input for Seed](#Input-for-Seed).  
 
 
 The example below steps through how a user would call `evaluate` to compute the output values and the jacobian of a multivariate vector function at a specified set of values. 
@@ -407,16 +405,166 @@ def sin(x):
   return result
 ```
 
-
-### Future Features
-
-#### Machine Learning Applications
+### Machine Learning Toolkit
 
 The Awesomediff Team's interest in automatic differentiation is driven by Data Scientists' need for efficient and accurate ways of repeatedly evaluating derivatives as part of optimization problems in Machine Learning.
 
-We will showcase the power of automatic differentiation by building a [gradient descent solver](https://towardsdatascience.com/gradient-descent-algorithm-and-its-variants-10f652806a3) that leverages `awesomediff`'s functionality to find the minimum of a differentiable cost function. We will provide several cost functions, including mean squared error.
+The awesomediff package includes a Machine Learning Toolkit that uses gradient descent to solve linear regressions and perform root finding with Newton's method.
 
-We would also like to provide an implementation of the Fisher Scoring Algorithm (discussed [here](https://stats.stackexchange.com/questions/176351/implement-fisher-scoring-for-linear-regression) for example) to approximate the Maximum Likelihood Estimators for linear regression.
+#### Gradient Descent Solver
+
+<center><img src="resources/gradient-descent.png?raw=true" width="50%" /></center>
+
+Gradient descent is the algorithm at the heart of many machine learning techniques. It provides a very straightforward way of finding a local minimum of differentiable cost functions (and in the case of convex functions, this is guaranteed to be a global minimum).
+
+Gradient Descent can be used to solve many types of models, including regression models, that have a cost function and a series of weights. The algorithm begins with randomly initialized weights, uses the model to calculate a solution based on those weights, then evaluates the cost associated with that solution.
+
+Once the cost has been found, it looks for a new solution with a lower cost by taking a step along the gradient of the cost function to choose new weights. The size of the step is controlled by a learning rate. This process is repeated iteratively until a stopping condition has been met.
+
+The algorithm may stop when it exceeds a maximum number of iterations (indicating that it failed to converge on a solution) or when the difference in cost is below a certain absolute or relative threshold (indicated that it has found a point acceptably close to a minimum).
+
+The `GradientDescent` class included in `awesomediff`'s toolkit implements this algorithm and allows the user to specify a learning rate and stopping conditions.
+
+Note: It is not generally necessary to create `GradientDescent` objects directly, (although advanced users may with to use the class to create their own solvers, as described in the section [below](#How-to-Contribute-to-awesomediff)); instead, they are initialized under the hood in `Model` objects that the user creates. Creating linear regression models that make use of the gradient descent algorithm is documented in the following section.
+
+#### Linear Regression Models
+
+Linear regressions model data using an equation of the following form `Y=β₀+β₁X+β₂X+...+βₚ` , where `X` is an `n`-by-`p` matrix of predictor variables and `Y` is an `n`-length vector of response variables.
+
+The simplest regression model, ordinary least squares (OLS) regression, finds the values of `β` that minimize the mean squared error (MSE) of the predictions. More advanced models, such as Ridge and Lasso regression, add a regularization term which penalizes large coefficient values. This helps reduce the problem of overfitting and helps find solutions that generalize better to new data.
+
+##### Ordinary Least Squares Regression
+
+The OLS regression takes the following initialization parameters:
+
+- `fit_intercept` : A boolean indicating whether or not to include an intercept term.
+- `standardize` : A boolean indicating whether or not to standardize the data (mean=0,stdev=1) before fitting.
+- `solver` : A string indicating which solver to use (currently only `'gradient_descent'` is supported).
+- `solver_kwargs` : A dictionary of optional arguments to pass to the solver.
+
+OLS demo:
+
+```python
+X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+print("\nWith intercept:")
+reg = ad.LinearRegression(fit_intercept=True,learning_rate=0.01,max_iter=3000)
+reg.fit(X,y)
+equation = "y = {:.3f}".format(reg.intercept)
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ")
+print(equation)
+print("R^2 =",reg.score(X,y))
+
+print("\nWithout intercept:")
+reg = ad.LinearRegression(fit_intercept=False,learning_rate=0.01,max_iter=3000)
+reg.fit(X,y)
+equation = "y = "
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ").replace("= +","=")
+print(equation)
+print("R^2 =",reg.score(X,y))
+```
+
+Output:
+
+```
+With intercept:
+y = 2.711 - 0.841 * x1 + 2.750 * x2 + 6.461 * x3 - 1.519 * x4
+R^2 = 0.9994659005096189
+
+Without intercept:
+y =  - 1.314 * x1 + 2.785 * x2 + 6.569 * x3 - 1.414 * x4
+R^2 = 0.9571266824223628
+```
+
+##### Lasso Regression (L1 norm regularization)
+
+In addition to the parameters described above, the Ridge regression construction takes an additional `l1_penalty` parameter, specifying the penalty applied to the L1 norm of the coefficients.
+
+Lasso regression example:
+
+```python
+X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+print("\nWith intercept:")
+reg = ad.LassoRegression(fit_intercept=True,learning_rate=0.01,max_iter=3000,l1_penalty=1.0)
+reg.fit(X,y)
+equation = "y = {:.3f}".format(reg.intercept)
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ")
+print(equation)
+print("R^2 =",reg.score(X,y))
+
+print("\nWithout intercept:")
+reg = ad.LassoRegression(fit_intercept=False,learning_rate=0.01,max_iter=3000,l1_penalty=1.0)
+reg.fit(X,y)
+equation = "y = "
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ").replace("= +","=")
+print(equation)
+print("R^2 =",reg.score(X,y))
+```
+
+Output:
+
+```
+With intercept:
+y = 2.713 - 0.828 * x1 + 2.748 * x2 + 6.450 * x3 - 1.521 * x4
+R^2 = 0.9994642054709294
+
+Without intercept:
+y =  - 1.369 * x1 + 2.795 * x2 + 6.614 * x3 - 1.406 * x4
+R^2 = 0.9571496985554787
+```
+
+##### Ridge Regression (L2 norm regularization)
+
+In addition to the parameters described above, the Ridge regression construction takes an additional `l2_penalty` parameter, specifying the penalty applied to the L2 norm of the coefficients.
+
+Ridge regression example (using the standardize parameter: the solver converges better when data is transformed such that each feature has a mean of `0` and a standard deviation of `1`):
+```python
+X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+print("\nWith intercept:")
+reg = ad.RidgeRegression(fit_intercept=True,standardize=True,learning_rate=0.05,max_iter=3000,l2_penalty=1.0)
+reg.fit(X,y)
+equation = "y = {:.3f}".format(reg.intercept)
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ")
+print(equation)
+print("R^2 =",reg.score(X,y))
+
+print("\nWithout intercept:")
+reg = ad.RidgeRegression(fit_intercept=False,standardize=True,learning_rate=0.05,max_iter=3000,l2_penalty=1.0)
+reg.fit(X,y)
+equation = "y = "
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ").replace("= +","=")
+print(equation)
+print("R^2 =",reg.score(X,y))
+```
+
+Output:
+
+```
+With intercept:
+y = 1.244 - 1.410 * x1 + 11.222 * x2 + 9.271 * x3 - 6.280 * x4
+R^2 = 0.9993211387084784
+
+Without intercept:
+y =  - 1.402 * x1 + 11.219 * x2 + 9.267 * x3 - 6.282 * x4
+R^2 = 0.9898979933989382
+```
 
 #### Newton's Method
 
@@ -436,14 +584,65 @@ root = uni_Newton(root_finding, 50)
 >>> 9.689480066299438e-06
 ```
 
-#### Additional Use Cases
+### How to Contribute to `awesomediff`
 
-We hope that the loss/scoring functions we include in our package may have applications beyond the world of Machine Learning. We plan to build a small demo of an Automatic Market Maker (AMM) that uses a [logarithmic scoring function](https://en.wikipedia.org/wiki/Scoring_rule#Logarithmic_scoring_rule).
+In order to facilitate extensions of `awesomediff` functionality, we have have provided super-classes for solvers and models.
 
-AMMs are used to build prediction markets where individuals can purchase contacts that pay out if a certain event occurs. The goal of the AMM is to aggregate information about participants' beliefs in order to obtain a prediction of the probability associated with an event occurring. They provide monetary payouts in order to incentivize participation of people who have credible information about what they are trying to predict. The have been used, for example, to forecast the results of elections or sales of a particular product.
+**Solvers** take an instance of a `Model` subclass in their constructor, and implement a `solve` method which iteratively invokes the model's `_predict` and `_loss` functions.
 
-Participants who think the market's estimated probability is too low or too high may purchase contracts in order to make a profit. The AMM automatically adjusts prices after each transaction, such that the prices always reflect the market's current belief of the probability it is trying to estimate. 
+```python
+class Solver:
 
-An AMM uses a scoring function to determine the price of each transaction, and the derivative of that function to estimate the market's belief about the probability of each event occurring. Since AMMs can issue contracts for numerous possible outcomes, they need to be able to evaluate many partial derivatives.
+    """A superclass for defining a solver."""
 
-AMMs also have an associative property: the effect on cost and its derivative must be the same for one large transaction or a  sequence of smaller transactions that purchase an equivalent number of contracts. This will allow us to demonstrate that `awesomediff` is evaluating derivatives without loss of accuracy.
+    def __init__(self,model,**solver_params):
+        self.model = model
+        pass
+
+    def solve(self,model_params,initial_weights,X,y):
+        raise NotImplementedError
+```
+
+**Models** implement expose the `fit`, `predict`, and `score` methods to the user, and internally implement `_predict` and `_loss` (which are invoked by the solver). Since models may use various configurations for their weights (for example, regressions have coefficients as well as an optional intercept term), the model may use the `_pack_weights` and `_unpack_weights` methods to transit weights to and from the solver as a single list.
+
+```python
+class Model:
+
+    def __init__(self):
+        """Initialize the model."""
+        pass
+
+    @classmethod
+    def _pack_weights(cls,model_params,placeholder):
+        """Create a single list of weights to pass to the solver."""
+        raise NotImplementedError
+
+    @classmethod
+    def _unpack_weights(cls,model_params,weights):
+        """Extract weights from list returned by the solver."""
+        raise NotImplementedError
+
+    @classmethod
+    def _loss(cls,model_params,weights,X,y):
+        """Calculate the loss between y and the predictions made with X using specified parameters and weights."""
+        raise NotImplementedError
+
+    @classmethod
+    def _predict(cls,model_params,weights,X):
+        """Predict X using specified parameters and weights."""
+        raise NotImplementedError
+
+    def predict(self,X):
+        """Predict X."""
+        raise NotImplementedError
+
+    def fit(self,X,y):
+        """Fit the model to X and y."""
+        raise NotImplementedError
+
+    def score(self,X,y):
+        """Return the score of y and the predictions made with X."""
+        raise NotImplementedError
+```
+
+
