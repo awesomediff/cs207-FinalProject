@@ -407,16 +407,166 @@ def sin(x):
   return result
 ```
 
-
-### Future Features
-
-#### Machine Learning Applications
+### Machine Learning Toolkit
 
 The Awesomediff Team's interest in automatic differentiation is driven by Data Scientists' need for efficient and accurate ways of repeatedly evaluating derivatives as part of optimization problems in Machine Learning.
 
-We will showcase the power of automatic differentiation by building a [gradient descent solver](https://towardsdatascience.com/gradient-descent-algorithm-and-its-variants-10f652806a3) that leverages `awesomediff`'s functionality to find the minimum of a differentiable cost function. We will provide several cost functions, including mean squared error.
+The awesomediff package includes a Machine Learning Toolkit that uses gradient descent to solve linear regressions and perform root finding with Newton's method.
 
-We would also like to provide an implementation of the Fisher Scoring Algorithm (discussed [here](https://stats.stackexchange.com/questions/176351/implement-fisher-scoring-for-linear-regression) for example) to approximate the Maximum Likelihood Estimators for linear regression.
+#### Gradient Descent Solver
+
+<center><img src="resources/gradient-descent.png?raw=true" width="50%" /></center>
+
+Gradient descent is the algorithm at the heart of many machine learning techniques. It provides a very straightforward way of finding a local minimum of differentiable cost functions (and in the case of convex functions, this is guaranteed to be a global minimum).
+
+Gradient Descent can be used to solve many types of models, including regression models, that have a cost function and a series of weights. The algorithm begins with randomly initialized weights, uses the model to calculate a solution based on those weights, then evaluates the cost associated with that solution.
+
+Once the cost has been found, it looks for a new solution with a lower cost by taking a step along the gradient of the cost function to choose new weights. The size of the step is controlled by a learning rate. This process is repeated iteratively until a stopping condition has been met.
+
+The algorithm may stop when it exceeds a maximum number of iterations (indicating that it failed to converge on a solution) or when the difference in cost is below a certain absolute or relative threshold (indicated that it has found a point acceptably close to a minimum).
+
+The `GradientDescent` class included in `awesomediff`'s toolkit implements this algorithm and allows the user to specify a learning rate and stopping conditions.
+
+Note: It is not generally necessary to create `GradientDescent` objects directly, (although advanced users may with to use the class to create their own solvers, as described in the section [below](#How-to-Contribute-to-awesomediff)); instead, they are initialized under the hood in `Model` objects that the user creates. Creating linear regression models that make use of the gradient descent algorithm is documented in the following section.
+
+#### Linear Regression Models
+
+Linear regressions model data using an equation of the following form `Y=β₀+β₁X+β₂X+...+βₚ` , where `X` is an `n`-by-`p` matrix of predictor variables and `Y` is an `n`-length vector of response variables.
+
+The simplest regression model, ordinary least squares (OLS) regression, finds the values of `β` that minimize the mean squared error (MSE) of the predictions. More advanced models, such as Ridge and Lasso regression, add a regularization term which penalizes large coefficient values. This helps reduce the problem of overfitting and helps find solutions that generalize better to new data.
+
+##### Ordinary Least Squares Regression
+
+The OLS regression takes the following initialization parameters:
+
+- `fit_intercept` : A boolean indicating whether or not to include an intercept term.
+- `standardize` : A boolean indicating whether or not to standardize the data (mean=0,stdev=1) before fitting.
+- `solver` : A string indicating which solver to use (currently only `'gradient_descent'` is supported).
+- `solver_kwargs` : A dictionary of optional arguments to pass to the solver.
+
+OLS demo:
+
+```python
+X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+print("\nWith intercept:")
+reg = ad.LinearRegression(fit_intercept=True,learning_rate=0.01,max_iter=3000)
+reg.fit(X,y)
+equation = "y = {:.3f}".format(reg.intercept)
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ")
+print(equation)
+print("R^2 =",reg.score(X,y))
+
+print("\nWithout intercept:")
+reg = ad.LinearRegression(fit_intercept=False,learning_rate=0.01,max_iter=3000)
+reg.fit(X,y)
+equation = "y = "
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ").replace("= +","=")
+print(equation)
+print("R^2 =",reg.score(X,y))
+```
+
+Output:
+
+```
+With intercept:
+y = 2.711 - 0.841 * x1 + 2.750 * x2 + 6.461 * x3 - 1.519 * x4
+R^2 = 0.9994659005096189
+
+Without intercept:
+y =  - 1.314 * x1 + 2.785 * x2 + 6.569 * x3 - 1.414 * x4
+R^2 = 0.9571266824223628
+```
+
+##### Lasso Regression (L1 norm regularization)
+
+In addition to the parameters described above, the Ridge regression construction takes an additional `l1_penalty` parameter, specifying the penalty applied to the L1 norm of the coefficients.
+
+Lasso regression example:
+
+```python
+X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+print("\nWith intercept:")
+reg = ad.LassoRegression(fit_intercept=True,learning_rate=0.01,max_iter=3000,l1_penalty=1.0)
+reg.fit(X,y)
+equation = "y = {:.3f}".format(reg.intercept)
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ")
+print(equation)
+print("R^2 =",reg.score(X,y))
+
+print("\nWithout intercept:")
+reg = ad.LassoRegression(fit_intercept=False,learning_rate=0.01,max_iter=3000,l1_penalty=1.0)
+reg.fit(X,y)
+equation = "y = "
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ").replace("= +","=")
+print(equation)
+print("R^2 =",reg.score(X,y))
+```
+
+Output:
+
+```
+With intercept:
+y = 2.713 - 0.828 * x1 + 2.748 * x2 + 6.450 * x3 - 1.521 * x4
+R^2 = 0.9994642054709294
+
+Without intercept:
+y =  - 1.369 * x1 + 2.795 * x2 + 6.614 * x3 - 1.406 * x4
+R^2 = 0.9571496985554787
+```
+
+##### Ridge Regression (L2 norm regularization)
+
+In addition to the parameters described above, the Ridge regression construction takes an additional `l2_penalty` parameter, specifying the penalty applied to the L2 norm of the coefficients.
+
+Ridge regression example (using the standardize parameter: the solver converges better when data is transformed such that each feature has a mean of `0` and a standard deviation of `1`):
+```python
+X = np.array([[-1,4,-1,-3],[1,-3,1,2],[0,2,0,6],[-2,-5,1,-6],[3,5,1,3],[-3,-5,-3,-3]])
+y = np.array([13,-2.5,-1,6,15.5,-23.5])
+
+print("\nWith intercept:")
+reg = ad.RidgeRegression(fit_intercept=True,standardize=True,learning_rate=0.05,max_iter=3000,l2_penalty=1.0)
+reg.fit(X,y)
+equation = "y = {:.3f}".format(reg.intercept)
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ")
+print(equation)
+print("R^2 =",reg.score(X,y))
+
+print("\nWithout intercept:")
+reg = ad.RidgeRegression(fit_intercept=False,standardize=True,learning_rate=0.05,max_iter=3000,l2_penalty=1.0)
+reg.fit(X,y)
+equation = "y = "
+for i,b in enumerate(reg.coefs):
+    equation += " + {:.3f} * x{}".format(b,i+1)
+equation = equation.replace("+ -","- ").replace("= +","=")
+print(equation)
+print("R^2 =",reg.score(X,y))
+```
+
+Output:
+
+```
+With intercept:
+y = 1.244 - 1.410 * x1 + 11.222 * x2 + 9.271 * x3 - 6.280 * x4
+R^2 = 0.9993211387084784
+
+Without intercept:
+y =  - 1.402 * x1 + 11.219 * x2 + 9.267 * x3 - 6.282 * x4
+R^2 = 0.9898979933989382
+```
 
 #### Newton's Method
 
@@ -436,14 +586,71 @@ root = uni_Newton(root_finding, 50)
 >>> 9.689480066299438e-06
 ```
 
-#### Additional Use Cases
+### How to Contribute to `awesomediff`
 
-We hope that the loss/scoring functions we include in our package may have applications beyond the world of Machine Learning. We plan to build a small demo of an Automatic Market Maker (AMM) that uses a [logarithmic scoring function](https://en.wikipedia.org/wiki/Scoring_rule#Logarithmic_scoring_rule).
+In order to facilitate extensions of `awesomediff` functionality, we have have provided super-classes for solvers and models.
 
-AMMs are used to build prediction markets where individuals can purchase contacts that pay out if a certain event occurs. The goal of the AMM is to aggregate information about participants' beliefs in order to obtain a prediction of the probability associated with an event occurring. They provide monetary payouts in order to incentivize participation of people who have credible information about what they are trying to predict. The have been used, for example, to forecast the results of elections or sales of a particular product.
+**Solvers** take an instance of a `Model` subclass in their constructor, and implement a `solve` method which iteratively invokes the model's `_predict` and `_loss` functions.
 
-Participants who think the market's estimated probability is too low or too high may purchase contracts in order to make a profit. The AMM automatically adjusts prices after each transaction, such that the prices always reflect the market's current belief of the probability it is trying to estimate. 
+```python
+class Solver:
 
-An AMM uses a scoring function to determine the price of each transaction, and the derivative of that function to estimate the market's belief about the probability of each event occurring. Since AMMs can issue contracts for numerous possible outcomes, they need to be able to evaluate many partial derivatives.
+    """A superclass for defining a solver."""
 
-AMMs also have an associative property: the effect on cost and its derivative must be the same for one large transaction or a  sequence of smaller transactions that purchase an equivalent number of contracts. This will allow us to demonstrate that `awesomediff` is evaluating derivatives without loss of accuracy.
+    def __init__(self,model,**solver_params):
+        self.model = model
+        pass
+
+    def solve(self,model_params,initial_weights,X,y):
+        raise NotImplementedError
+```
+
+**Models** implement expose the `fit`, `predict`, and `score` methods to the user, and internally implement `_predict` and `_loss` (which are invoked by the solver). Since models may use various configurations for their weights (for example, regressions have coefficients as well as an optional intercept term), the model may use the `_pack_weights` and `_unpack_weights` methods to transit weights to and from the solver as a single list.
+
+```python
+class Model:
+
+    def __init__(self):
+        """Initialize the model."""
+        pass
+
+    @classmethod
+    def _pack_weights(cls,model_params,placeholder):
+        """Create a single list of weights to pass to the solver."""
+        raise NotImplementedError
+
+    @classmethod
+    def _unpack_weights(cls,model_params,weights):
+        """Extract weights from list returned by the solver."""
+        raise NotImplementedError
+
+    @classmethod
+    def _loss(cls,model_params,weights,X,y):
+        """Calculate the loss between y and the predictions made with X using specified parameters and weights."""
+        raise NotImplementedError
+
+    @classmethod
+    def _predict(cls,model_params,weights,X):
+        """Predict X using specified parameters and weights."""
+        raise NotImplementedError
+
+    def predict(self,X):
+        """Predict X."""
+        raise NotImplementedError
+
+    def fit(self,X,y):
+        """Fit the model to X and y."""
+        raise NotImplementedError
+
+    def score(self,X,y):
+        """Return the score of y and the predictions made with X."""
+        raise NotImplementedError
+```
+
+### Wishlist of Future Features
+
+Possible extensions of awesomediff's toolkit include
+
+- Computing maximum likelihood using the Fisher Scoring Algorithm.
+- Implementing hill-climbing algorithms.
+
