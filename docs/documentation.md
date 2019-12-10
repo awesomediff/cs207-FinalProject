@@ -580,7 +580,7 @@ Below is an illustration of how to implement Newton's method through uni_Newton 
 def root_finding(a):
     return a**2 + 2*a + 1
     
-root = uni_Newton(root_finding, 50)
+root = ad.uni_Newton(root_finding, 50)
 >>> 9.689480066299438e-06
 ```
 
