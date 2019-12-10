@@ -57,15 +57,12 @@ Automatic differentiation, on the other hand, escapes the limitations posed by s
 
 * The package is available on PyPI.
     - You can either install the package in your local environment or in a virtual environment.
-* Make sure you have numpy in your environment. If not, install using pip:
-```
-pip install numpy
-```
-* If you have a Python3 environment with `numpy` installed ready to go, the `awesomediff` package can be installed using the following code:
+
+`awesomediff` package can be installed using the following code:
 ```
 pip install awesomediff
 ```
-  
+
 * For developers, you can install the package by getting our Github repository following these steps:
 * Clone the project's git repository to your machine:
 ```
@@ -94,14 +91,11 @@ Inside the virtual environment, you can either install the package using pip or 
 ```python
 import awesomediff as ad
 ```
-- Generally, the user should initialize an auto differentiation object (known as a `variable` object in the package) first, for each variable needed in the function, using the module.
-- The user can form functions using the objects initialized to create more complex objects with elementary math operations and functions.
+- To compute the value and derivative/jacobian of a function at a specified set of values, the user will first define a function using elementary operations supported by `awesomediff` and pass it to the `evaluate` function along with a list of values of variables at which to evaluate. 
+- While it is advised that the user call `evaluate` to compute the value and derivative/jacobian of a function, the user may also directly instantiate an auto differentiation object (known as a `variable` object in the package) and access the value and derivative via the variable object's `val` and `der` attributes, respectively. The user can form functions using the objects initialized to create more complex objects with elementary math operations and functions.
 - The elementary math operations and functions can be performed in the same way as the operations in `numpy`.
-- The constructor of a `variable` object takes in a scalar or a vector.
-- The user can calculate the derivative(s) and the output value(s) at a targeting evaluation point.
 
-Below are some example scenarios to demonstrate how the module works:
-
+Below are some examples to demonstrate how the module works:
 
 ```python
 import math
@@ -149,19 +143,19 @@ print("circumference at radius = 10:", area.der)
 ###### Case 2: Evaluate value and partial derivatives of 1 - e^(-rx), x = 0.5, r = 5
 
 ```python
-# define CDF of exponential distribution
+# define function
 def function(x,r):
     func1 = 1-ad.exp(-r*x)
     return func1
 
-
+# pass function and list of values at which to evaluate 
 output_value, partial_ders = ad.evaluate(func=function, vals=[0.5, 5])
 
-# value of CDF function
+# value of function
 print("output value at x = 0.5, r = 5", output_value) 
 >>> 0.9179
 
-# value of PDF function (i.e. derivative of CDF)
+# derivative of function 
 print("partial derivatives at x = 0.5, r = 5", partial_ders)
 >>> [0.4104, 0.0410]
 ```
@@ -169,16 +163,20 @@ print("partial derivatives at x = 0.5, r = 5", partial_ders)
 ###### Case 3: Evaluate value and jacobian of f = [[xy + cos(x)], [x + y + cos(y)]]
 
 ```python
+# define function
 def function(x,y):
     func1 = x * y + ad.cos(x)
     func2 = x + y + ad.cos(y)
     return [func1, func2]
 
+# pass function and list of values at which to evaluate 
 output_value, jacobian = ad.evaluate(func=function, vals=[1, 1])
 
+# value of function
 print("output value at x = 1, y = 1", output_value)
 >>> [1.5403, 2.5403]
 
+# derivative of function
 print("jacobian at x = 1, y = 1", jacobian) # [[]]
 >>> [[0.1585, 1],
      [1, 0.1585]]
@@ -335,6 +333,7 @@ If the user does not pass in an input for the `seed` argument, it is assumed tha
 ```python
 output_value, jacobian = ad.evaluate(func=function, vals=[0, 1], seed=[[2, 0], [0, 3]])
 ```
+In general, the length of the outer list and the lengths of each of the inner lists for seed should equal the total number of variables of the function passed. 
 
 
 ### Elementary Operations
