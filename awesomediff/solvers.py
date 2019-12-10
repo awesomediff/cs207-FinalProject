@@ -379,7 +379,7 @@ class LinearRegression(Model):
 class LassoRegression(LinearRegression):
     """Linear regression model with L1 regularization."""
 
-    def __init__(self,l1_penalty=0.1,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
+    def __init__(self,l1_penalty=1.0,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
         """Initialize LinearRegression model with adjustments for L2 regularization."""
 
         super().__init__(fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs)
@@ -399,7 +399,7 @@ class LassoRegression(LinearRegression):
 class RidgeRegression(LinearRegression):
     """Linear regression model with L2 regularization."""
 
-    def __init__(self,l2_penalty=0.1,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
+    def __init__(self,l2_penalty=1.0,fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs):
         """Initialize LinearRegression model with adjustments for L2 regularization."""
 
         super().__init__(fit_intercept=True,standardize=False,solver='gradient_descent',**solver_kwargs)
